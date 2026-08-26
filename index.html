@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ДоброВет — ветеринарная клиника в Нижнекамске</title>
+<!-- ПРОТОТИП. Пока на странице сгенерированные фото и неподтверждённый
+     список симптомов — держим её вне поиска. Снять эту строку при запуске,
+     когда клиника подтвердит данные и придут реальные кадры. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Ветклиника ДоброВет на Первопроходцев, 26. Приём, УЗИ, рентген и анализы за один визит. Хирургия, стационар и аптека в том же здании. +7 987 215-22-77">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400..700&family=Unbounded:wght@600..800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="assets/brand/logo.svg">
+<link rel="icon" href="assets/brand/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+<!-- Единственный hex вне tokens.css: meta не принимает var(). Держать
+     в паре с --primary. -->
+<meta name="theme-color" content="#015BF9">
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/main.css">
+<script>
+  /* До первой отрисовки: включаем режим анимации только если посетитель
+     не просил их отключить. main.js снимет класс, если GSAP не загрузится. */
+  try {
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('js-motion');
+    }
+  } catch (e) {}
+</script>
+
+<meta property="og:title" content="ДоброВет — ветклиника в Нижнекамске">
+<meta property="og:description" content="Приём, УЗИ, рентген и анализы за один визит. Первопроходцев, 26.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<!-- og:url и og:image ждут домена и реальных фото — CONTENT.md, «Ожидает данных» -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VeterinaryCare",
+  "name": "ДоброВет",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "ул. Первопроходцев, 26",
+    "addressLocality": "Нижнекамск",
+    "addressCountry": "RU"
+  },
+  "geo": { "@type": "GeoCoordinates", "latitude": 55.609512, "longitude": 51.813379 },
+  "telephone": "+79872152277"
+}
+</script>
+</head>
+<body>
+
+<a class="skip" href="#glavnoe">Перейти к содержанию</a>
+
+<!-- ============ НАВИГАЦИЯ · плавающая пилюля ============ -->
+<header class="nav" id="nav">
+  <a class="nav__mark" href="#glavnoe">
+    <img class="nav__logo" src="assets/brand/logo.svg" width="28" height="28"
+         alt="" aria-hidden="true">
+    ДоброВет
+  </a>
+  <nav class="nav__links" aria-label="Разделы страницы">
+    <a href="#zdanie">Что у нас есть</a>
+    <a href="#vizit">Как проходит визит</a>
+    <a href="#tseny">Цены</a>
+    <a href="#kontakty">Контакты</a>
+  </nav>
+  <a class="btn btn--primary nav__cta" href="tel:+79872152277">
+    <span class="nav__cta-full">+7 987 215-22-77</span>
+    <span class="nav__cta-short">Позвонить</span>
+  </a>
+</header>
+
+<main id="glavnoe">
+
+<!-- ============ 1 · HERO · афиша ============ -->
+<section class="hero" aria-labelledby="hero-h1">
+  <div class="hero__inner">
+
+    <p class="hero__eyebrow" data-reveal>Ветеринарная клиника · Нижнекамск</p>
+
+    <h1 class="hero__title" id="hero-h1">
+      <span class="hero__line"><span class="hero__line-in" data-hero-line>Лечим</span></span>
+      <span class="hero__line"><span class="hero__line-in" data-hero-line>бережно.</span></span>
+      <span class="hero__line hero__line--indent"><span class="hero__line-in" data-hero-line>Считаем</span></span>
+      <span class="hero__line hero__line--indent"><span class="hero__line-in" data-hero-line>честно.</span></span>
+    </h1>
+
+    <!-- ЕДИНСТВЕННЫЙ намеренный слом сетки: вырез животного ложится поверх букв.
+         Плейсхолдер до генерации — см. CLAUDE.md, правило 6. -->
+    <figure class="hero__cutout" data-hero-cutout>
+      <img src="assets/photos/hero-cutout.webp" width="1120" height="1223"
+           alt="Кот и собака сидят рядом и смотрят в камеру"
+           data-placeholder="заменить реальным кадром из клиники">
+    </figure>
+
+    <p class="hero__lead" data-reveal>
+      Приём, УЗИ, рентген и анализы за один визит. Хирургия, стационар и аптека —
+      в том же здании, на Первопроходцев,&nbsp;26.
+    </p>
+
+    <div class="hero__actions" data-reveal>
+      <a class="btn btn--accent btn--lg" href="#kontakty">Записаться на приём</a>
+      <a class="btn btn--onblue btn--lg" href="tel:+79872152277">+7 987 215-22-77</a>
+    </div>
+
+    <p class="hero__status chip chip--status" id="status" data-status>
+      <span class="chip__dot" aria-hidden="true"></span>
+      <span data-status-text>Часы работы уточняются</span>
+    </p>
+
+  </div>
+</section>
+
+<!-- ============ 2 · ПРОБЛЕМА ============ -->
+<section class="problem" aria-labelledby="problem-h2">
+  <div class="shell">
+    <p class="section-num" aria-hidden="true">01</p>
+    <h2 class="problem__statement" id="problem-h2" data-reveal>
+      Когда питомцу резко становится плохо, самое тяжёлое — не диагноз.
+      Тяжело то, что вечером непонятно, кто вообще примет, куда ехать
+      и во сколько это обойдётся.
+    </h2>
+
+    <ol class="timeline">
+      <li class="timeline__item" data-reveal>
+        <span class="timeline__time">21:40</span>
+        <span class="timeline__text">кот не ест третий день</span>
+      </li>
+      <li class="timeline__item" data-reveal>
+        <span class="timeline__time">22:10</span>
+        <span class="timeline__text">гуглите «ветеринар срочно»</span>
+      </li>
+      <li class="timeline__item" data-reveal>
+        <span class="timeline__time">22:30</span>
+        <span class="timeline__text">звоните, никто не отвечает</span>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ 3 · ЭКСТРЕННЫЙ БЛОК · тёмная панель (1 из 2) ============ -->
+<section class="emergency" aria-labelledby="emergency-h2">
+  <div class="shell emergency__grid">
+    <div>
+      <p class="section-num section-num--panel" aria-hidden="true">02</p>
+      <h2 class="emergency__title" id="emergency-h2" data-reveal>Питомцу плохо прямо сейчас?</h2>
+      <p class="emergency__lead" data-reveal>
+        Позвоните — примем вне очереди и скажем, что делать по дороге.
+      </p>
+      <div class="emergency__actions" data-reveal>
+        <a class="btn btn--accent btn--lg" href="tel:+79872152277">+7 987 215-22-77</a>
+        <a class="btn btn--onpanel btn--lg" href="tel:+79172446954">+7 917 244-69-54</a>
+      </div>
+    </div>
+
+    <div class="firstaid" data-reveal>
+      <p class="firstaid__head">До приезда</p>
+      <ul class="firstaid__list">
+        <li>не кормить и не поить насильно</li>
+        <li>не давать человеческие лекарства</li>
+        <li>записать, когда начались симптомы</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Оценка срочности. Работает без JS: radio + :checked в CSS. -->
+  <div class="shell">
+    <div class="triage" data-reveal>
+      <div class="triage__group" role="radiogroup" aria-labelledby="triage-legend">
+        <p class="triage__legend" id="triage-legend">Что происходит с питомцем?</p>
+          <input class="triage__radio triage__radio--now" type="radio"
+                 name="triage" id="triage-1">
+          <label class="triage__option" for="triage-1">не дышит, задыхается, синеет язык</label>
+          <input class="triage__radio triage__radio--now" type="radio"
+                 name="triage" id="triage-2">
+          <label class="triage__option" for="triage-2">судороги или потеря сознания</label>
+          <input class="triage__radio triage__radio--now" type="radio"
+                 name="triage" id="triage-3">
+          <label class="triage__option" for="triage-3">кот тужится в лотке и не может помочиться</label>
+          <input class="triage__radio triage__radio--now" type="radio"
+                 name="triage" id="triage-4">
+          <label class="triage__option" for="triage-4">травма, сильное кровотечение, падение с высоты</label>
+          <input class="triage__radio triage__radio--now" type="radio"
+                 name="triage" id="triage-5">
+          <label class="triage__option" for="triage-5">съел химию, лекарство или отраву</label>
+          <input class="triage__radio triage__radio--today" type="radio"
+                 name="triage" id="triage-6">
+          <label class="triage__option" for="triage-6">рвота или понос больше суток</label>
+          <input class="triage__radio triage__radio--today" type="radio"
+                 name="triage" id="triage-7">
+          <label class="triage__option" for="triage-7">не ест дольше суток, вялый</label>
+          <input class="triage__radio triage__radio--plan" type="radio"
+                 name="triage" id="triage-8">
+          <label class="triage__option" for="triage-8">хромает, чешется, беспокоит ухо или глаз</label>
+          <input class="triage__radio triage__radio--plan" type="radio"
+                 name="triage" id="triage-9">
+          <label class="triage__option" for="triage-9">прививка, чипирование, стерилизация, стрижка</label>
+        <div class="triage__results" role="status" aria-live="polite">
+          <div class="triage__result triage__result--now">
+            <p class="triage__verdict">Не ждите. Выезжайте.</p>
+            <p class="triage__advice">
+              Позвоните с дороги — подготовимся к вашему приезду и скажем,
+              что делать в пути.
+            </p>
+            <a class="btn btn--accent btn--lg" href="tel:+79872152277">Позвонить сейчас</a>
+          </div>
+
+          <div class="triage__result triage__result--today">
+            <p class="triage__verdict">Позвоните сегодня.</p>
+            <p class="triage__advice">
+              По телефону разберёмся, нужно ли ехать прямо сейчас
+              или можно записаться на ближайшее время.
+            </p>
+            <a class="btn btn--accent btn--lg" href="tel:+79872152277">+7 987 215-22-77</a>
+          </div>
+
+          <div class="triage__result triage__result--plan">
+            <p class="triage__verdict">Это плановый визит.</p>
+            <p class="triage__advice">
+              Позвоните, чтобы выбрать удобное время и уточнить,
+              нужна ли подготовка.
+            </p>
+            <a class="btn btn--onpanel btn--lg" href="tel:+79872152277">Записаться</a>
+          </div>
+
+          <p class="triage__idle">Выберите пункт — подскажем, насколько это срочно.</p>
+        </div>
+      </div>
+
+      <p class="triage__disclaimer">
+        Это подсказка по срочности, а не диагноз. Сомневаетесь — звоните,
+        разберёмся по телефону.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4 · ВСЁ В ОДНОМ ЗДАНИИ · плитки ============ -->
+<!-- В референсах на этом месте строка метрик (12,5K+ пациентов и т.п.).
+     У клиники нет ни одной подтверждённой цифры — вместо метрик
+     показываем подтверждённый факт: что реально есть в здании. -->
+<section class="rooms" id="zdanie" aria-labelledby="rooms-h2">
+  <div class="shell">
+    <p class="section-num section-num--onblue" aria-hidden="true">03</p>
+    <h2 class="rooms__title" id="rooms-h2" data-reveal>
+      Всё, что нужно питомцу,&nbsp;— в одном здании
+    </h2>
+    <p class="rooms__lead" data-reveal>
+      Диагностика, операция, восстановление и препараты — на одном адресе.
+      Ездить между кабинетами по городу не нужно.
+    </p>
+
+    <!-- Плейсхолдер: заменить реальным кадром коридора клиники -->
+    <figure class="rooms__photo" data-reveal>
+      <img src="assets/photos/interer.webp" width="1600" height="900"
+           alt="Коридор и зона ожидания клиники" loading="lazy"
+           data-placeholder="заменить реальным кадром из клиники">
+    </figure>
+
+    <ul class="tiles">
+      <li class="tile tile--paper" data-reveal>
+        <span class="tile__num">01</span>
+        <span class="tile__name">Приёмная</span>
+      </li>
+      <li class="tile tile--accent" data-reveal>
+        <span class="tile__num">02</span>
+        <span class="tile__name">УЗИ и рентген</span>
+      </li>
+      <li class="tile tile--paper" data-reveal>
+        <span class="tile__num">03</span>
+        <span class="tile__name">Лаборатория</span>
+        <span class="tile__note">срок готовности уточняется</span>
+      </li>
+      <li class="tile tile--panel" data-reveal>
+        <span class="tile__num">04</span>
+        <span class="tile__name">Операционная</span>
+      </li>
+      <li class="tile tile--paper" data-reveal>
+        <span class="tile__num">05</span>
+        <span class="tile__name">Стационар</span>
+      </li>
+      <li class="tile tile--accent" data-reveal>
+        <span class="tile__num">06</span>
+        <span class="tile__name">Ветаптека</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 4b · НАПРАВЛЕНИЯ ПРИЁМА ============ -->
+<section class="fields" aria-labelledby="fields-h2">
+  <div class="shell">
+    <p class="section-num" aria-hidden="true">04</p>
+    <h2 class="fields__title" id="fields-h2" data-reveal>С чем принимают</h2>
+    <p class="fields__lead" data-reveal>
+      Направления заявлены в справочниках. Точный состав и график конкретных
+      специалистов клиника подтверждает — позвоните, чтобы попасть к нужному врачу.
+    </p>
+    <ul class="fields__list" data-reveal>
+        <li class="fields__item">Терапия</li>
+        <li class="fields__item">Хирургия</li>
+        <li class="fields__item">Дерматология</li>
+        <li class="fields__item">Офтальмология</li>
+        <li class="fields__item">Кардиология</li>
+        <li class="fields__item">Стоматология</li>
+        <li class="fields__item">Гинекология и акушерство</li>
+        <li class="fields__item">Аллергология</li>
+        <li class="fields__item">Онкология</li>
+        <li class="fields__item">Анестезиология</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 5 · КАК ПРОХОДИТ ВИЗИТ ============ -->
+<section class="visit" id="vizit" aria-labelledby="visit-h2">
+  <div class="shell">
+    <p class="section-num" aria-hidden="true">05</p>
+    <h2 class="visit__title" id="visit-h2" data-reveal>Как проходит визит</h2>
+
+    <ol class="steps">
+      <li class="step" data-reveal>
+        <figure class="step__media">
+          <img src="assets/photos/shag-1-zvonok.webp" width="730" height="730"
+               alt="Администратор клиники записывает приём, держа телефонную трубку" loading="lazy"
+               data-placeholder="заменить реальным кадром из клиники">
+        </figure>
+        <p class="step__num">1</p>
+        <h3 class="step__name">Звоните</h3>
+        <p class="step__text">Опишем, что делать прямо сейчас, и назовём время приёма</p>
+      </li>
+      <li class="step" data-reveal>
+        <figure class="step__media">
+          <img src="assets/photos/shag-2-osmotr.webp" width="730" height="730"
+               alt="Ветеринарный врач осматривает кота на смотровом столе" loading="lazy"
+               data-placeholder="заменить реальным кадром из клиники">
+        </figure>
+        <p class="step__num">2</p>
+        <h3 class="step__name">Осмотр</h3>
+        <p class="step__text">Врач осматривает питомца и объясняет, что видит</p>
+      </li>
+      <li class="step" data-reveal>
+        <figure class="step__media">
+          <img src="assets/photos/shag-3-diagnostika.webp" width="730" height="730"
+               alt="Аппарат УЗИ во время исследования" loading="lazy"
+               data-placeholder="заменить реальным кадром из клиники">
+        </figure>
+        <p class="step__num">3</p>
+        <h3 class="step__name">Диагностика в тот же визит</h3>
+        <p class="step__text">УЗИ, рентген и анализы — здесь же, ехать никуда не нужно</p>
+      </li>
+      <li class="step" data-reveal>
+        <figure class="step__media">
+          <img src="assets/photos/shag-4-naznacheniya.webp" width="730" height="730"
+               alt="Врач выписывает назначения, рядом упаковки препаратов" loading="lazy"
+               data-placeholder="заменить реальным кадром из клиники">
+        </figure>
+        <p class="step__num">4</p>
+        <h3 class="step__name">Назначение и контроль</h3>
+        <p class="step__text">Расписываем лечение и договариваемся о повторном визите</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ 5b · ЧТО ВЗЯТЬ С СОБОЙ ============ -->
+<section class="prep" aria-labelledby="prep-h2">
+  <div class="shell prep__grid">
+    <div>
+      <p class="section-num" aria-hidden="true">06</p>
+      <h2 class="prep__title" id="prep-h2" data-reveal>Что взять с собой</h2>
+      <p class="prep__lead" data-reveal>
+        Отметки сохранятся в этом браузере — можно собраться заранее
+        и вернуться к списку перед выходом.
+      </p>
+      <button class="btn btn--ghost prep__reset" type="button" data-checklist-reset>
+        Снять все отметки
+      </button>
+    </div>
+
+    <ul class="checklist" data-reveal>
+        <li class="checklist__item">
+          <input class="checklist__box" type="checkbox" id="chk-perenoska" data-checklist="perenoska">
+          <label class="checklist__label" for="chk-perenoska">Переноска или поводок с ошейником</label>
+        </li>
+        <li class="checklist__item">
+          <input class="checklist__box" type="checkbox" id="chk-pasport" data-checklist="pasport">
+          <label class="checklist__label" for="chk-pasport">Ветеринарный паспорт, если он есть</label>
+        </li>
+        <li class="checklist__item">
+          <input class="checklist__box" type="checkbox" id="chk-analizy" data-checklist="analizy">
+          <label class="checklist__label" for="chk-analizy">Прошлые анализы, снимки и выписки</label>
+        </li>
+        <li class="checklist__item">
+          <input class="checklist__box" type="checkbox" id="chk-lekarstva" data-checklist="lekarstva">
+          <label class="checklist__label" for="chk-lekarstva">Список лекарств, которые питомец получает</label>
+        </li>
+        <li class="checklist__item">
+          <input class="checklist__box" type="checkbox" id="chk-voprosy" data-checklist="voprosy">
+          <label class="checklist__label" for="chk-voprosy">Список вопросов врачу — на приёме забывается</label>
+        </li>
+        <li class="checklist__item">
+          <input class="checklist__box" type="checkbox" id="chk-pled" data-checklist="pled">
+          <label class="checklist__label" for="chk-pled">Плед или знакомая игрушка, чтобы было спокойнее</label>
+        </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 6 · ЦЕНЫ · спек-лист ============ -->
+<section class="prices" id="tseny" aria-labelledby="prices-h2">
+  <div class="shell">
+    <p class="section-num" aria-hidden="true">07</p>
+    <h2 class="prices__title" id="prices-h2" data-reveal>Цены</h2>
+    <p class="prices__lead" data-reveal>
+      В пакетные цены уже входят наркоз, расходники и наблюдение после.
+      Отдельных доплат в конце не будет.
+    </p>
+
+    <p class="prices__warning" data-reveal>
+      Прайс от клиники ещё не получен. Пока во всех строках стоит «—»:
+      правдоподобная цифра, которой никто не подтверждал, здесь была бы обманом.
+    </p>
+
+    <table class="pricelist">
+      <caption class="visually-hidden">Услуги и цены клиники ДоброВет</caption>
+      <thead>
+        <tr><th scope="col">Услуга</th><th scope="col">Что входит</th><th scope="col">Цена</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Первичный приём терапевта</th>
+          <td>осмотр, консультация, план обследования</td>
+          <td class="price">—<span class="price__note">уточняется</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Комплексная вакцинация</th>
+          <td>осмотр, вакцина, отметка в паспорте</td>
+          <td class="price">—<span class="price__note">уточняется</span></td>
+        </tr>
+        <tr class="pricelist__feature">
+          <th scope="row">Кастрация кота «под ключ»</th>
+          <td>наркоз · операция · попона · наблюдение · снятие швов</td>
+          <td class="price">—<span class="price__note">уточняется</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Стерилизация кошки «под ключ»</th>
+          <td>наркоз · операция · попона · наблюдение · снятие швов</td>
+          <td class="price">—<span class="price__note">уточняется</span></td>
+        </tr>
+        <tr>
+          <th scope="row">УЗИ брюшной полости</th>
+          <td>заключение на руки в день приёма</td>
+          <td class="price">—<span class="price__note">уточняется</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Рентген (один снимок)</th>
+          <td>снимок и описание</td>
+          <td class="price">—<span class="price__note">уточняется</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Общий анализ крови</th>
+          <td>результат в день обращения</td>
+          <td class="price">—<span class="price__note">уточняется</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Чипирование</th>
+          <td>чип, регистрация в базе, отметка в паспорте</td>
+          <td class="price">—<span class="price__note">уточняется</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Гигиеническая стрижка</th>
+          <td>по размеру и типу шерсти</td>
+          <td class="price">—<span class="price__note">уточняется</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Сутки в стационаре</th>
+          <td>наблюдение, назначения, отчёт владельцу</td>
+          <td class="price">—<span class="price__note">уточняется</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 7 · ВРАЧИ ============ -->
+<section class="doctors" aria-labelledby="doctors-h2">
+  <div class="shell">
+    <p class="section-num" aria-hidden="true">08</p>
+    <h2 class="doctors__title" id="doctors-h2" data-reveal>Кто принимает</h2>
+    <p class="doctors__lead" data-reveal>
+      Клиника готовит имена, специализации и стаж. До этого карточки стоят без данных —
+      подставлять правдоподобные мы не будем.
+    </p>
+
+    <ul class="team">
+      <li class="teammate" data-reveal>
+        <figure class="teammate__media">
+          <img src="assets/photos/vrach-1.webp" width="760" height="950"
+               alt="Ветеринарный врач клиники" loading="lazy"
+               data-placeholder="заменить реальным фото врача">
+        </figure>
+        <p class="teammate__name">—</p>
+        <p class="teammate__role">имя и специализация уточняются</p>
+      </li>
+      <li class="teammate" data-reveal>
+        <figure class="teammate__media">
+          <img src="assets/photos/vrach-2.webp" width="760" height="950"
+               alt="Ветеринарный врач клиники" loading="lazy"
+               data-placeholder="заменить реальным фото врача">
+        </figure>
+        <p class="teammate__name">—</p>
+        <p class="teammate__role">имя и специализация уточняются</p>
+      </li>
+      <li class="teammate" data-reveal>
+        <figure class="teammate__media">
+          <img src="assets/photos/vrach-3.webp" width="760" height="950"
+               alt="Ветеринарный врач клиники" loading="lazy"
+               data-placeholder="заменить реальным фото врача">
+        </figure>
+        <p class="teammate__name">—</p>
+        <p class="teammate__role">имя и специализация уточняются</p>
+      </li>
+    </ul>
+
+    <p class="doctors__warning" data-reveal>
+      Фотографии на этой странице временные и показывают только раскладку.
+      Их заменят реальные снимки врачей клиники.
+    </p>
+
+    <p class="doctors__note" data-reveal>
+      Направления по данным справочников, состав уточняется: терапия, хирургия,
+      дерматология, офтальмология, кардиология, стоматология, гинекология,
+      аллергология, онкология, анестезиология.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 7b · ВОПРОСЫ ============ -->
+<section class="faq" aria-labelledby="faq-h2">
+  <div class="shell">
+    <p class="section-num" aria-hidden="true">09</p>
+    <h2 class="faq__title" id="faq-h2" data-reveal>Частые вопросы</h2>
+    <div class="faq__list" data-reveal>
+      <details class="faq__item">
+        <summary class="faq__q">Где вы находитесь и как доехать?</summary>
+        <div class="faq__a">Нижнекамск, ул.&nbsp;Первопроходцев,&nbsp;26. Ориентир — ГСК «Автомобилист&nbsp;№3».
+      <a class="faq__link" href="https://2gis.ru/nizhnekamsk/geo/55.609512%2C51.813379" target="_blank" rel="noopener">Построить маршрут →</a></div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q">Что можно сделать за один визит?</summary>
+        <div class="faq__a">Приём, УЗИ, рентген и анализы — в один визит и в одном здании. Там же хирургия,
+      стационар и ветаптека, поэтому не нужно ездить между кабинетами по городу.</div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q">Сколько стоит приём?</summary>
+        <div class="faq__a">Прайс сейчас уточняется, поэтому цифр на сайте нет — правдоподобная цифра была бы
+      обманом. Назовём сумму по телефону до визита. В пакетные цены входят наркоз,
+      расходники и наблюдение после: отдельных доплат в конце не будет.</div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q">Питомцу плохо ночью — что делать?</summary>
+        <div class="faq__a">Позвоните по любому из двух номеров. По телефону скажут, принимают ли сейчас,
+      и подскажут, что делать по дороге. График работы клиника подтверждает,
+      поэтому на сайте он пока помечен как уточняемый.</div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q">Что взять с собой на приём?</summary>
+        <div class="faq__a">Переноску или поводок, ветпаспорт, прошлые анализы и снимки, список лекарств.
+      Выше есть чек-лист с отметками — он сохраняется в браузере.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8 · ОТЗЫВ ============ -->
+<section class="review" aria-labelledby="review-h2">
+  <div class="shell">
+    <h2 class="visually-hidden" id="review-h2">Отзыв</h2>
+    <figure class="quote" data-reveal>
+      <blockquote class="quote__text">
+        «Персонал вежливый, врачи всё подробно объясняют, видно, что животных любят.
+        Есть рентген — это тоже плюс.»
+      </blockquote>
+      <figcaption class="quote__meta">
+        <p class="quote__source">отзыв на 2ГИС · январь 2025</p>
+        <a class="quote__link" href="https://2gis.ru/nizhnekamsk" target="_blank" rel="noopener">Читать отзывы на 2ГИС →</a>
+        <p class="quote__note">
+          Рейтинг в источниках расходится, поэтому число не выводим до подтверждения.
+        </p>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ 9 · КОНТАКТЫ ============ -->
+<section class="contacts" id="kontakty" aria-labelledby="contacts-h2">
+  <div class="shell">
+    <p class="section-num section-num--panel" aria-hidden="true">10</p>
+    <h2 class="contacts__title" id="contacts-h2" data-reveal>
+      Приезжайте — посмотрим и скажем честно, что происходит.
+    </h2>
+
+    <div class="contacts__grid">
+      <div class="contacts__block" data-reveal>
+        <p class="contacts__label">Телефоны</p>
+        <a class="contacts__big" href="tel:+79872152277">+7 987 215-22-77</a>
+        <a class="contacts__big" href="tel:+79172446954">+7 917 244-69-54</a>
+      </div>
+
+      <div class="contacts__block" data-reveal>
+        <p class="contacts__label">Адрес</p>
+        <p class="contacts__text">
+          ул. Первопроходцев, 26, Нижнекамск<br>
+          <span class="contacts__muted">ориентир: ГСК «Автомобилист №3»</span>
+        </p>
+        <a class="contacts__link" href="https://2gis.ru/nizhnekamsk/geo/55.609512%2C51.813379" target="_blank" rel="noopener">Построить маршрут →</a>
+      </div>
+
+      <div class="contacts__block" data-reveal>
+        <p class="contacts__label">Часы работы</p>
+        <table class="hours">
+          <tbody>
+            <tr><th scope="row">Пн–Сб</th><td>10:00–20:00</td></tr>
+            <tr><th scope="row">Вс</th><td>10:00–15:00</td></tr>
+          </tbody>
+        </table>
+        <p class="contacts__muted">график уточняется у клиники</p>
+      </div>
+
+      <div class="contacts__block" data-reveal>
+        <p class="contacts__label">Соцсети</p>
+        <a class="contacts__link" href="https://vk.com/dobrovetnk" target="_blank" rel="noopener">ВКонтакте →</a>
+        <a class="contacts__link" href="https://instagram.com/dobrovet.nk" target="_blank" rel="noopener">Instagram →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ 10 · ФУТЕР · мастхед ============ -->
+<footer class="footer">
+  <div class="shell footer__inner">
+    <p class="footer__mark">ДоброВет</p>
+    <p class="footer__line">
+      Ветеринарная клиника · ул. Первопроходцев, 26 · Нижнекамск
+    </p>
+    <nav class="footer__links" aria-label="Ссылки в подвале">
+      <a href="#zdanie">Что у нас есть</a>
+      <a href="#vizit">Визит</a>
+      <a href="#tseny">Цены</a>
+      <a href="#kontakty">Контакты</a>
+      <a href="https://vk.com/dobrovetnk" target="_blank" rel="noopener">ВКонтакте</a>
+    </nav>
+    <p class="footer__legal">Реквизиты и лицензия — уточняются.</p>
+  </div>
+</footer>
+
+<!-- ============ мобильная липкая полоса ============ -->
+<div class="stickybar" aria-hidden="false">
+  <a class="btn btn--accent stickybar__btn" href="tel:+79872152277">Позвонить</a>
+  <a class="btn btn--ghost stickybar__btn" href="#kontakty">Как доехать</a>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="scripts/config.js" defer></script>
+<script src="scripts/main.js" defer></script>
+</body>
+</html>

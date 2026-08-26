@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="ДоброВет">
+  <title>ДоброВет</title>
+  <!-- Знак = главный аргумент клиники: шесть кабинетов под одной крышей.
+       Повторяет сетку плиток на странице. Не буква в кружке. -->
+  <rect width="64" height="64" rx="16" fill="#015BF9"/>
+  <g fill="#FFFFFF">
+    <rect x="12"   y="19.5" width="10" height="10" rx="2.5"/>
+    <rect x="27"   y="19.5" width="10" height="10" rx="2.5"/>
+    <rect x="42"   y="19.5" width="10" height="10" rx="2.5"/>
+    <rect x="12"   y="34.5" width="10" height="10" rx="2.5"/>
+    <rect x="27"   y="34.5" width="10" height="10" rx="2.5"/>
+  </g>
+  <rect x="42" y="34.5" width="10" height="10" rx="2.5" fill="#C8F135"/>
+</svg>

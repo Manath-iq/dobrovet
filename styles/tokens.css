@@ -1,0 +1,69 @@
+/* ДоброВет — токены.
+   Источник: .tastemaker/style-lock.md (палитра снята с референсов, контраст проверен).
+   НЕ добавлять оттенок без пересчёта контраста и записи в контракт. */
+
+:root {
+  /* --- цвет --- */
+  --ink:          #131A2E;  /* основной текст, тёмная панель */
+  --paper:        #FFFFFF;
+  --surface:      #F2F4F8;
+  --border:       #DDE3EC;
+  --muted:        #5A6478;  /* вторичный текст на светлом, 5.95:1 к paper */
+
+  --primary:      #015BF9;  /* синий: и кнопка, и заливка целых секций */
+  --on-primary:   #FFFFFF;
+  --primary-lift: #4D8BFF;  /* синий для тёмной панели — обычный там нечитаем */
+
+  --accent:       #C8F135;  /* лайм: ТОЛЬКО заливка, никогда не текст на светлом */
+  --on-accent:    #131A2E;
+
+  --panel:        #131A2E;
+  --on-panel:     #FFFFFF;
+  --panel-muted:  #A8B2C6;  /* вторичный текст на панели, 8.11:1 */
+
+  /* Легальные пары (check_contrast.py):
+     ink/paper 17.29 · ink/surface 15.70 · ink/accent 13.24 · muted/paper 5.95
+     primary/paper 5.43 · on-primary/primary 5.43 · primary/surface 4.93
+     on-panel/panel 17.29 · accent/panel 13.24 · primary-lift/panel 6.90
+     panel-muted/panel 8.11 · muted/surface 5.40
+     UI-safe: primary/border 4.21 · primary/accent 4.16 · ink/primary 3.18
+     ЗАПРЕЩЕНО: accent текстом на paper (1.31) и на surface (1.19);
+                primary на panel (3.18 — только крупный кегль) — брать primary-lift;
+                ink мелким текстом на primary (3.18) — только крупный кегль. */
+
+  /* --- шкала отступов --- */
+  --s1: 4px;   --s2: 8px;   --s3: 12px;  --s4: 16px;
+  --s6: 24px;  --s8: 32px;  --s12: 48px; --s16: 64px;
+  --s24: 96px; --s32: 128px; --s40: 160px; --s48: 192px;
+
+  /* --- радиусы --- */
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-xl: 32px;
+  --r-pill: 999px;
+
+  /* --- типографика --- */
+  --font-display: 'Unbounded', system-ui, sans-serif;  /* только короткие строки */
+  --font-body: 'Onest', system-ui, -apple-system, sans-serif;
+
+  --t-hero:  clamp(40px, 8.2vw, 118px);
+  --t-h2:    clamp(26px, 4vw, 52px);
+  --t-h3:    clamp(20px, 2.2vw, 28px);
+  --t-lead:  clamp(17px, 1.5vw, 21px);
+  --t-body:  17px;
+  --t-small: 15px;
+  --t-micro: 13px;
+
+  /* --- движение --- */
+  --dur-fast: 160ms;
+  --dur-base: 320ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* --- раскладка --- */
+  --page-max: 1320px;
+  --gutter: var(--s6);
+}
+
+@media (max-width: 640px) {
+  :root { --gutter: var(--s4); }
+}
