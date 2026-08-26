@@ -444,54 +444,57 @@ a { color: inherit; }
   max-width: 46ch;
   font-size: var(--t-lead);
 }
-.rooms__photo {
-  margin: var(--s12) 0 0;
-}
-.rooms__photo img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-radius: var(--r-lg);
-}
-
 .tiles {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 168px;
   gap: var(--s3);
   margin-top: var(--s16);
 }
 .tile {
   border-radius: var(--r-lg);
-  padding: var(--s8);
-  min-height: 200px;
+  padding: var(--s6);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: var(--s6);
+  gap: var(--s4);
+  overflow: hidden;
+  min-width: 0;
 }
+.tile--tall  { grid-row: span 2; }
+.tile--wide  { grid-column: span 2; }
+/* Фото — самая крупная плитка, 2x2 */
+.tile--photo { grid-column: span 2; grid-row: span 2; padding: 0; }
+.tile--photo img { width: 100%; height: 100%; object-fit: cover; }
+
 .tile--paper { background: var(--paper); color: var(--ink); }
 .tile--accent { background: var(--accent); color: var(--on-accent); }
 .tile--panel { background: var(--panel); color: var(--on-panel); }
 .tile__num {
   font-family: var(--font-display);
-  font-size: 32px;
+  font-size: clamp(30px, 3vw, 46px);
   font-weight: 700;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
-  opacity: 0.32;
+  opacity: 0.3;
 }
 .tile__name { font-size: var(--t-h3); font-weight: 600; line-height: 1.2; }
 .tile__note {
   font-size: var(--t-micro);
   opacity: 0.65;
-  margin-top: calc(-1 * var(--s4));
+  margin-top: calc(-1 * var(--s3));
 }
 
-@media (max-width: 860px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 1000px) {
+  .tiles { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 160px; }
+  .tile--wide, .tile--photo { grid-column: span 2; }
+  .tile--photo { grid-row: span 1; }
+}
 @media (max-width: 520px) {
   .rooms { padding-block: var(--s16); margin-inline: var(--s3); }
-  .tiles { grid-template-columns: 1fr; margin-top: var(--s8); }
-  .tile { min-height: 0; padding: var(--s6); }
+  .tiles { grid-template-columns: 1fr; grid-auto-rows: 150px; margin-top: var(--s8); }
+  .tile--wide, .tile--tall, .tile--photo { grid-column: auto; grid-row: auto; }
+  .tile--photo { min-height: 200px; }
 }
 
 /* ============ 5 · КАК ПРОХОДИТ ВИЗИТ ============ */
@@ -745,9 +748,21 @@ a { color: inherit; }
 .contacts__grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--s8);
+  gap: var(--s3);
   margin-top: var(--s16);
 }
+/* Колонки стали карточками: на тёмной панели плоский текст в четыре
+   столбца читался как подвал, а это закрывающая секция. */
+.contacts__block {
+  background: color-mix(in srgb, var(--on-panel) 7%, transparent);
+  border-radius: var(--r-lg);
+  padding: var(--s6);
+}
+.contacts__block:first-child {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.contacts__block:first-child .contacts__label { color: var(--on-accent); opacity: 0.7; }
 .contacts__label {
   font-size: var(--t-micro);
   font-weight: 600;
@@ -786,7 +801,7 @@ a { color: inherit; }
 @media (max-width: 980px) { .contacts__grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) {
   .contacts { padding-block: var(--s16); margin-inline: var(--s3); }
-  .contacts__grid { grid-template-columns: 1fr; gap: var(--s6); margin-top: var(--s8); }
+  .contacts__grid { grid-template-columns: 1fr; gap: var(--s2); margin-top: var(--s8); }
 }
 
 /* ============ 10 · ФУТЕР ============ */

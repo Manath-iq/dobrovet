@@ -256,38 +256,39 @@
       Ездить между кабинетами по городу не нужно.
     </p>
 
-    <!-- Плейсхолдер: заменить реальным кадром коридора клиники -->
-    <figure class="rooms__photo" data-reveal>
-      <img src="assets/photos/interer.webp" width="1600" height="900"
-           alt="Коридор и зона ожидания клиники" loading="lazy"
-           data-placeholder="заменить реальным кадром из клиники">
-    </figure>
-
+    <!-- Фото не отдельной полосой, а самой крупной плиткой мозаики:
+         так «всё в одном здании» читается одной композицией, а не
+         «картинка сверху, список снизу». -->
     <ul class="tiles">
+      <li class="tile tile--photo" data-reveal>
+        <img src="assets/photos/interer.webp" width="1600" height="900"
+             alt="Коридор и зона ожидания клиники" loading="lazy"
+             data-placeholder="заменить реальным кадром из клиники">
+      </li>
       <li class="tile tile--paper" data-reveal>
-        <span class="tile__num">01</span>
         <span class="tile__name">Приёмная</span>
+        <span class="tile__num">01</span>
       </li>
-      <li class="tile tile--accent" data-reveal>
-        <span class="tile__num">02</span>
+      <li class="tile tile--accent tile--tall" data-reveal>
         <span class="tile__name">УЗИ и рентген</span>
+        <span class="tile__num">02</span>
       </li>
       <li class="tile tile--paper" data-reveal>
-        <span class="tile__num">03</span>
         <span class="tile__name">Лаборатория</span>
         <span class="tile__note">срок готовности уточняется</span>
+        <span class="tile__num">03</span>
       </li>
       <li class="tile tile--panel" data-reveal>
-        <span class="tile__num">04</span>
         <span class="tile__name">Операционная</span>
+        <span class="tile__num">04</span>
       </li>
       <li class="tile tile--paper" data-reveal>
-        <span class="tile__num">05</span>
         <span class="tile__name">Стационар</span>
+        <span class="tile__num">05</span>
       </li>
-      <li class="tile tile--accent" data-reveal>
-        <span class="tile__num">06</span>
+      <li class="tile tile--accent tile--wide" data-reveal>
         <span class="tile__name">Ветаптека</span>
+        <span class="tile__num">06</span>
       </li>
     </ul>
   </div>
@@ -312,6 +313,9 @@
       </li>
       <li class="card card--2 wide card--panel" data-reveal>
         <span class="card__label">Хирургия</span>
+        <img class="card__pet" src="assets/photos/pet-4.webp" width="520" height="886"
+             alt="Щенок лабрадора" loading="lazy"
+             data-placeholder="временное фото">
         <span class="card__num">02</span>
       </li>
       <li class="card card--3 tall card--primary" data-reveal>
