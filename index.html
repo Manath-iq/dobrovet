@@ -302,17 +302,49 @@
       Направления заявлены в справочниках. Точный состав и график конкретных
       специалистов клиника подтверждает — позвоните, чтобы попасть к нужному врачу.
     </p>
-    <ul class="fields__list" data-reveal>
-        <li class="fields__item">Терапия</li>
-        <li class="fields__item">Хирургия</li>
-        <li class="fields__item">Дерматология</li>
-        <li class="fields__item">Офтальмология</li>
-        <li class="fields__item">Кардиология</li>
-        <li class="fields__item">Стоматология</li>
-        <li class="fields__item">Гинекология и акушерство</li>
-        <li class="fields__item">Аллергология</li>
-        <li class="fields__item">Онкология</li>
-        <li class="fields__item">Анестезиология</li>
+    <ul class="fields__grid" data-reveal>
+      <li class="card card--1 tall card--accent" data-reveal>
+        <span class="card__label">Терапия</span>
+        <img class="card__pet" src="assets/photos/pet-1.webp" width="520" height="842"
+             alt="Рыжий кот" loading="lazy"
+             data-placeholder="временное фото">
+        <span class="card__num">01</span>
+      </li>
+      <li class="card card--2 wide card--panel" data-reveal>
+        <span class="card__label">Хирургия</span>
+        <span class="card__num">02</span>
+      </li>
+      <li class="card card--3 tall card--primary" data-reveal>
+        <span class="card__label">Дерматология</span>
+        <img class="card__pet" src="assets/photos/pet-2.webp" width="520" height="842"
+             alt="Собака породы вельш-корги" loading="lazy"
+             data-placeholder="временное фото">
+        <span class="card__num">03</span>
+      </li>
+      <li class="card card--4 card--paper" data-reveal>
+        <span class="card__label">Стоматология</span>
+        <span class="card__num">04</span>
+      </li>
+      <li class="card card--5 card--paper" data-reveal>
+        <span class="card__label">Офтальмология</span>
+        <span class="card__num">05</span>
+      </li>
+      <li class="card card--6 wide card--primary" data-reveal>
+        <span class="card__label">Кардиология</span>
+        <img class="card__pet" src="assets/photos/pet-3.webp" width="520" height="842"
+             alt="Британская короткошёрстная кошка" loading="lazy"
+             data-placeholder="временное фото">
+        <span class="card__num">06</span>
+      </li>
+      <li class="card card--7 wide card--surface" data-reveal>
+        <span class="card__label">Ещё направления</span>
+        <ul class="card__chips">
+          <li>Гинекология и акушерство</li>
+          <li>Аллергология</li>
+          <li>Онкология</li>
+          <li>Анестезиология</li>
+        </ul>
+      </li>
     </ul>
   </div>
 </section>
@@ -330,8 +362,10 @@
                alt="Администратор клиники записывает приём, держа телефонную трубку" loading="lazy"
                data-placeholder="заменить реальным кадром из клиники">
         </figure>
-        <p class="step__num">1</p>
-        <h3 class="step__name">Звоните</h3>
+        <div class="step__head">
+          <p class="step__num">1</p>
+          <h3 class="step__name">Звоните</h3>
+        </div>
         <p class="step__text">Опишем, что делать прямо сейчас, и назовём время приёма</p>
       </li>
       <li class="step" data-reveal>
@@ -340,8 +374,10 @@
                alt="Ветеринарный врач осматривает кота на смотровом столе" loading="lazy"
                data-placeholder="заменить реальным кадром из клиники">
         </figure>
-        <p class="step__num">2</p>
-        <h3 class="step__name">Осмотр</h3>
+        <div class="step__head">
+          <p class="step__num">2</p>
+          <h3 class="step__name">Осмотр</h3>
+        </div>
         <p class="step__text">Врач осматривает питомца и объясняет, что видит</p>
       </li>
       <li class="step" data-reveal>
@@ -350,8 +386,10 @@
                alt="Аппарат УЗИ во время исследования" loading="lazy"
                data-placeholder="заменить реальным кадром из клиники">
         </figure>
-        <p class="step__num">3</p>
-        <h3 class="step__name">Диагностика в тот же визит</h3>
+        <div class="step__head">
+          <p class="step__num">3</p>
+          <h3 class="step__name">Диагностика в тот же визит</h3>
+        </div>
         <p class="step__text">УЗИ, рентген и анализы — здесь же, ехать никуда не нужно</p>
       </li>
       <li class="step" data-reveal>
@@ -360,8 +398,10 @@
                alt="Врач выписывает назначения, рядом упаковки препаратов" loading="lazy"
                data-placeholder="заменить реальным кадром из клиники">
         </figure>
-        <p class="step__num">4</p>
-        <h3 class="step__name">Назначение и контроль</h3>
+        <div class="step__head">
+          <p class="step__num">4</p>
+          <h3 class="step__name">Назначение и контроль</h3>
+        </div>
         <p class="step__text">Расписываем лечение и договариваемся о повторном визите</p>
       </li>
     </ol>
