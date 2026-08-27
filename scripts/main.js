@@ -330,6 +330,38 @@
     }, { rootMargin: '-60% 0px 0px 0px' }).observe(hero);
   }
 
+  /* ---------- горизонтальные ленты ---------- */
+  /* Прокручиваемую область обязан достать и тот, кто ходит по странице
+     клавиатурой: внутри карточек врачей и шагов визита нет ни одной ссылки,
+     поэтому без tabindex вторая и третья карточки были бы недостижимы
+     (WCAG 2.1.1). Поэтому tabindex стоит прямо в разметке — он работает
+     и без JS. Здесь мы только СНИМАЕМ его там, где лента не прокручивается
+     (десктоп): иначе на широком экране появляется остановка табуляции,
+     которая ничего не делает. */
+  function initHScroll() {
+    var rails = [].slice.call(document.querySelectorAll('.hscroll'));
+    if (!rails.length) return;
+
+    function sync() {
+      rails.forEach(function (rail) {
+        var scrolls = rail.scrollWidth > rail.clientWidth + 1;
+        if (scrolls) {
+          rail.setAttribute('tabindex', '0');
+        } else {
+          rail.removeAttribute('tabindex');
+        }
+      });
+    }
+
+    sync();
+    var queued = false;
+    window.addEventListener('resize', function () {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () { queued = false; sync(); });
+    }, { passive: true });
+  }
+
   /* ---------- заявка на приём ---------- */
   /* ⚠️ ДЕМО. Заявка НИКУДА НЕ УХОДИТ: бэкенда у сайта нет, обработчик
      перехватывает submit и показывает экран «принято» локально. Это
@@ -412,6 +444,7 @@
     initChecklist();
     initTriage();
     initStickybar();
+    initHScroll();
     initBooking();
   }
 

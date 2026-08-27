@@ -132,7 +132,16 @@
     <a href="#tseny">Цены</a>
     <a href="#kontakty">Контакты</a>
   </nav>
+  <!-- Иконка живёт в кнопке всегда, а показывается с 420px, когда номер
+       уступает место слову «Позвонить». Ниже 360px слово прячется
+       визуально, но остаётся доступным именем ссылки: кнопка становится
+       кружком, и вордмарк «ДоброВет» помещается рядом даже на 320px. -->
   <a class="btn btn--primary nav__cta" href="tel:+79872152277">
+    <svg class="icon nav__cta-icon" viewBox="0 0 24 24" width="20" height="20"
+         fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M6.5 3h3l1.5 4-2 1.4a12 12 0 0 0 5.6 5.6L16 12l4 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.5 5.2 2 2 0 0 1 6.5 3Z"/>
+    </svg>
     <span class="nav__cta-full">+7 987 215-22-77</span>
     <span class="nav__cta-short">Позвонить</span>
   </a>
@@ -197,6 +206,10 @@
       и во сколько это обойдётся.
     </h2>
 
+    <!-- Три отметки времени без подписи читались как данные клиники:
+         непонятно, чей это вечер и о чём вообще карточки. Подпись сверху
+         называет сцену, строка снизу говорит, что делать с этим дальше. -->
+    <p class="timeline__label" data-reveal>Как это обычно выглядит</p>
     <ol class="timeline">
       <li class="timeline__item" data-reveal>
         <span class="timeline__time">21:40</span>
@@ -211,6 +224,10 @@
         <span class="timeline__text">звоните, никто не отвечает</span>
       </li>
     </ol>
+    <p class="timeline__outro" data-reveal>
+      Дальше на этой странице — что делать в такой вечер: куда звонить,
+      что можно сделать за один визит и сколько это стоит.
+    </p>
   </div>
 </section>
 
@@ -290,7 +307,8 @@
               Позвоните с дороги — подготовимся к вашему приезду и скажем,
               что делать в пути.
             </p>
-            <a class="btn btn--accent btn--lg" href="tel:+79872152277">Позвонить сейчас</a>
+            <!-- Плашка вердикта лаймовая: btn--accent на ней невидима (1.00). -->
+            <a class="btn btn--onaccent btn--lg" href="tel:+79872152277">Позвонить сейчас</a>
           </div>
 
           <div class="triage__result triage__result--today" data-verdict="Позвоните сегодня. По телефону разберёмся, нужно ли ехать сейчас.">
@@ -343,6 +361,12 @@
     <!-- Фото не отдельной полосой, а самой крупной плиткой мозаики:
          так «всё в одном здании» читается одной композицией, а не
          «картинка сверху, список снизу». -->
+    <!-- У каждой плитки свой кадр в .tile__media. На десктопе он скрыт
+         (display: none — и потому не грузится: lazy-картинка внутри
+         невидимого предка никогда не попадает во вьюпорт), там работает
+         одна крупная плитка .tile--photo. На мобильном наоборот: крупная
+         плитка уходит, и мозаика читается как «название кабинета → его
+         кадр → следующий кабинет». -->
     <ul class="tiles">
       <li class="tile tile--photo" data-reveal>
         <img src="assets/photos/interer.webp" width="1600" height="900"
@@ -352,27 +376,57 @@
       <li class="tile tile--paper" data-reveal>
         <span class="tile__name">Приёмная</span>
         <span class="tile__num" aria-hidden="true">01</span>
+        <figure class="tile__media">
+          <img src="assets/photos/kabinet-1-priemnaya.webp" width="1672" height="941"
+               alt="Стойка администратора и зона ожидания" loading="lazy"
+               data-placeholder="заменить реальным кадром приёмной">
+        </figure>
       </li>
       <li class="tile tile--accent tile--tall" data-reveal>
         <span class="tile__name">УЗИ и рентген</span>
         <span class="tile__num" aria-hidden="true">02</span>
+        <figure class="tile__media">
+          <img src="assets/photos/kabinet-2-uzi.webp" width="1672" height="941"
+               alt="Кабинет с аппаратом УЗИ и рентгеновским столом" loading="lazy"
+               data-placeholder="заменить реальным кадром кабинета УЗИ">
+        </figure>
       </li>
       <li class="tile tile--paper" data-reveal>
         <span class="tile__name">Лаборатория</span>
         <span class="tile__note" data-demo="срок не подтверждён">результат за 30 минут</span>
         <span class="tile__num" aria-hidden="true">03</span>
+        <figure class="tile__media">
+          <img src="assets/photos/kabinet-3-laboratoriya.webp" width="1672" height="941"
+               alt="Лабораторный стол с анализатором и пробирками" loading="lazy"
+               data-placeholder="заменить реальным кадром лаборатории">
+        </figure>
       </li>
       <li class="tile tile--panel" data-reveal>
         <span class="tile__name">Операционная</span>
         <span class="tile__num" aria-hidden="true">04</span>
+        <figure class="tile__media">
+          <img src="assets/photos/kabinet-4-operacionnaya.webp" width="1672" height="941"
+               alt="Операционный стол с хирургической лампой" loading="lazy"
+               data-placeholder="заменить реальным кадром операционной">
+        </figure>
       </li>
       <li class="tile tile--paper" data-reveal>
         <span class="tile__name">Стационар</span>
         <span class="tile__num" aria-hidden="true">05</span>
+        <figure class="tile__media">
+          <img src="assets/photos/kabinet-5-stacionar.webp" width="1672" height="941"
+               alt="Боксы стационара для животных" loading="lazy"
+               data-placeholder="заменить реальным кадром стационара">
+        </figure>
       </li>
       <li class="tile tile--accent tile--wide" data-reveal>
         <span class="tile__name">Ветаптека</span>
         <span class="tile__num" aria-hidden="true">06</span>
+        <figure class="tile__media">
+          <img src="assets/photos/kabinet-6-vetapteka.webp" width="1672" height="941"
+               alt="Витрина ветаптеки с препаратами" loading="lazy"
+               data-placeholder="заменить реальным кадром ветаптеки">
+        </figure>
       </li>
     </ul>
   </div>
@@ -391,7 +445,11 @@
       именно это лечение. Спросить можно всё — на приёме и после, по телефону.
     </p>
 
-    <ul class="team">
+    <!-- На телефоне это горизонтальная лента: три карточки в столбик
+         занимали больше трёх экранов прокрутки. tabindex делает ленту
+         достижимой с клавиатуры — без него прокрутить её можно только
+         пальцем или мышью (WCAG 2.1.1). -->
+    <ul class="team hscroll" tabindex="0" aria-label="Врачи клиники">
       <li class="teammate" data-reveal>
         <figure class="teammate__media">
           <img src="assets/photos/vrach-1.webp" width="760" height="950"
@@ -514,7 +572,9 @@
     <p class="section-num" aria-hidden="true">06</p>
     <h2 class="visit__title" id="visit-h2" data-reveal>Как проходит визит</h2>
 
-    <ol class="steps">
+    <!-- Та же лента, что у врачей: четыре шага в столбик — это ещё
+         три экрана прокрутки на телефоне. -->
+    <ol class="steps hscroll" tabindex="0" aria-label="Шаги визита">
       <li class="step" data-reveal>
         <figure class="step__media">
           <img src="assets/photos/shag-1-zvonok.webp" width="730" height="730"

@@ -110,12 +110,27 @@ a { color: inherit; }
    а не --on-accent: тот описывает текст поверх лайма и здесь просто
    совпадал по значению. Токен вне своей роли ломается при первой же правке. */
 .btn--onpanel { background: var(--primary-lift); color: var(--ink); }
+/* Кнопка ПОВЕРХ лаймовой плашки. btn--accent там давала лайм на лайме
+   (контраст 1.00): в вердикте «Не ждите. Выезжайте.» кнопка экстренного
+   звонка была видна только по тексту. Тёмная заливка даёт 13.24 к лайму
+   под ней и 17.29 к собственному тексту. */
+.btn--onaccent { background: var(--panel); color: var(--on-panel); }
 .btn--ghost   { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 2px var(--control-line); }
 
 @media (hover: hover) and (pointer: fine) {
   .btn:hover { transform: translateY(-2px); }
 }
 .btn:active { transform: translateY(0); }
+
+/* ============ иконки ============ */
+/* Одно семейство на весь сайт: инлайновый SVG 24×24, обводка currentColor,
+   толщина 2, скруглённые концы. Заливок и эмодзи нет. */
+.icon {
+  flex: none;
+  display: block;
+  width: 20px;
+  height: 20px;
+}
 
 .chip {
   display: inline-flex;
@@ -163,9 +178,8 @@ a { color: inherit; }
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  min-height: 44px;          /* цель нажатия на мобильном */
   gap: var(--s2);
+  min-height: 44px;          /* цель нажатия на мобильном */
 }
 .nav__logo { width: 28px; height: 28px; flex: none; border-radius: 7px; }
 .nav__links {
@@ -184,7 +198,8 @@ a { color: inherit; }
 }
 @media (hover: hover) and (pointer: fine) { .nav__links a:hover { color: var(--ink); } }
 .nav__cta { flex: none; }
-.nav__cta-short { display: none; }
+.nav__cta-short,
+.nav__cta-icon { display: none; }
 
 @media (max-width: 1000px) {
   .nav__links { display: none; }
@@ -193,14 +208,22 @@ a { color: inherit; }
 @media (max-width: 420px) {
   .nav__cta-full { display: none; }
   .nav__cta-short { display: inline; }
+  .nav__cta-icon { display: block; }
 }
-/* На 320px вордмарк (nowrap, ~144px) + «Позвонить» (126px) не влезали
-   в пилюлю шириной 288px: кнопка вылезала за её край и обрезалась
-   вьюпортом на 6px. Ниже 400px оставляем знак, а слово прячем в
-   доступное имя ссылки — так пилюля держится при любом фолбэке шрифта. */
-@media (max-width: 400px) {
+/* Раньше на 320px вордмарк (nowrap, ~133px) + кнопка «Позвонить» (~126px)
+   не влезали в пилюлю шириной 288px, и слово «ДоброВет» пряталось уже
+   с 400px — то есть на большинстве сегодняшних телефонов сайт открывался
+   БЕЗ НАЗВАНИЯ КЛИНИКИ в шапке. Ужимаем не имя, а кнопку: ниже 360px
+   она становится кружком с иконкой трубки, слово уходит в доступное имя
+   ссылки. 44px кружка + 133px знака + отступы = 209px, запас есть
+   и на 320px, и на любом фолбэке шрифта. */
+@media (max-width: 360px) {
   .nav { padding-inline-start: var(--s3); gap: var(--s3); }
-  .nav__mark-text {
+  .nav__cta {
+    width: 48px;
+    padding-inline: 0;
+  }
+  .nav__cta-short {
     position: absolute; width: 1px; height: 1px;
     padding: 0; margin: -1px; overflow: hidden;
     clip: rect(0 0 0 0); white-space: nowrap; border: 0;
@@ -370,13 +393,31 @@ a { color: inherit; }
   max-width: 32ch;
   text-wrap: balance;
 }
+/* Подпись, которая называет сцену. Без неё три карточки со временем
+   читались как факт о клинике, а не как чужой вечер. */
+.timeline__label {
+  margin-top: var(--s16);
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
 /* Три отметки идут поперёк страницы, а не стопкой: так это читается
    как ход времени и не оставляет пустой правый нижний угол. */
 .timeline {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--s6);
-  margin-top: var(--s16);
+  margin-top: var(--s6);
+}
+/* Выход из сцены: говорит, что дальше на странице — иначе секция
+   заканчивается на «никто не отвечает» и не ведёт никуда. */
+.timeline__outro {
+  margin-top: var(--s8);
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: var(--t-lead);
 }
 .timeline__item {
   display: flex;
@@ -413,8 +454,10 @@ a { color: inherit; }
 }
 @media (max-width: 640px) {
   .problem { padding-block: var(--s16); }
-  .timeline { margin-top: var(--s8); }
+  .timeline__label { margin-top: var(--s8); }
+  .timeline { margin-top: var(--s3); }
   .timeline__item { padding: var(--s6); }
+  .timeline__outro { margin-top: var(--s6); }
 }
 
 /* ============ 3 · ЭКСТРЕННЫЙ БЛОК ============ */
@@ -558,6 +601,11 @@ a { color: inherit; }
 /* Было 13px с opacity 0.65: единственное уточнение на всю мозаику
    набиралось мельче всего, что на ней есть. */
 .tile__note { font-size: var(--t-small); opacity: 0.8; }
+/* Кадр кабинета. На десктопе мозаика держится на одной крупной плитке
+   .tile--photo, поэтому здесь display: none — и браузер эти шесть
+   картинок не грузит: lazy-изображение внутри невидимого предка
+   никогда не пересекает вьюпорт. */
+.tile__media { display: none; }
 
 @media (max-width: 1000px) {
   .tiles { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 160px; }
@@ -566,14 +614,44 @@ a { color: inherit; }
 }
 @media (max-width: 520px) {
   .rooms { padding-block: var(--s16); margin-inline: var(--s3); }
-  /* Было 150px на ряд: название переехало вниз плитки, и над ним
-     оставалось полплитки пустоты — шесть слов растягивались на 900px
-     прокрутки. 96px делают из мозаики компактный список. */
-  .tiles { grid-template-columns: 1fr; grid-auto-rows: 96px; margin-top: var(--s8); }
+  /* Мозаика 4×N на телефоне разваливается, поэтому здесь она становится
+     стопкой: название кабинета → его кадр → следующий кабинет. Ряды
+     считаются по содержимому — жёсткая высота обрезала бы фото. */
+  .tiles { grid-template-columns: 1fr; grid-auto-rows: auto; margin-top: var(--s8); }
   .tile--wide, .tile--tall { grid-column: auto; grid-row: auto; }
-  /* Фото занимает два ряда, а не тянется min-height: ряд здесь жёсткий
-     (96px), и элемент выше ряда просто уезжал под следующую плитку. */
-  .tile--photo { grid-column: auto; grid-row: span 2; }
+  /* Один общий кадр интерьера на всю мозаику уходит: теперь свой кадр
+     есть у каждого кабинета. */
+  .tile--photo { display: none; }
+
+  /* Порядок внутри плитки задаётся flex-order, а не разметкой: в DOM
+     номер стоит последним, потому что на десктопе он абсолютный маркер
+     в углу, и там порядок чтения задаёт не поток. */
+  .tile {
+    padding: var(--s2);
+    justify-content: flex-start;
+    gap: 0;
+  }
+  .tile__num  { position: static; order: 1; padding: var(--s3) var(--s3) 0; }
+  .tile__name { order: 2; padding-inline: var(--s3); }
+  .tile__note { order: 3; padding: 0 var(--s3); }
+  .tile__media {
+    display: block;
+    order: 4;
+    margin: var(--s3) 0 0;
+  }
+  /* Радиус кадра + padding плитки = её собственный радиус: 12 + 8 = 20.
+     Концентричные скругления, иначе угол картинки спорит с углом плитки. */
+  /* height: auto обязателен: в разметке у кадра стоят width/height
+     (они держат место до загрузки), и без сброса высоты браузер берёт
+     атрибут как `height: 900px` — aspect-ratio при заданных обоих
+     размерах не применяется, и плитка вырастала до 977px. */
+  .tile__media img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: var(--r-md);
+  }
 }
 
 /* ============ 5 · КАК ПРОХОДИТ ВИЗИТ ============ */
@@ -850,6 +928,44 @@ a { color: inherit; }
 }
 .doctors__note { margin-top: var(--s8); font-size: var(--t-small); color: var(--muted); max-width: 62ch; }
 @media (max-width: 640px) { .doctors { padding-block: var(--s16); } }
+
+/* ============ горизонтальная лента (только телефон) ============ */
+/* Врачи и шаги визита стопкой съедали по три-четыре экрана прокрутки
+   каждая секция — из-за них до цен и контактов доходили единицы.
+   Лента показывает первую карточку целиком и край второй: видно, что
+   дальше есть ещё, и палец знает, куда вести. Блок должен стоять ПОСЛЕ
+   правил .team и .steps — у него та же специфичность, и переопределяет
+   он их только порядком. */
+@media (max-width: 720px) {
+  .hscroll {
+    display: flex;
+    gap: var(--s3);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    /* Лента идёт от края до края экрана, а карточки начинаются по колонке:
+       отрицательный внешний отступ гасит padding .shell, а свой внутренний
+       возвращает поля первой и последней карточке. */
+    margin-inline: calc(-1 * var(--gutter));
+    padding-inline: var(--gutter);
+    /* Без этого лента сама уезжает на 16px при загрузке: `scroll-snap-align:
+       start` меряет от края области прокрутки, а она по умолчанию идёт по
+       padding-box — первая карточка прилипала к краю экрана, а не к колонке.
+       scroll-padding задвигает эту область внутрь на тот же отступ. */
+    scroll-padding-inline: var(--gutter);
+    /* Место под тень и фокус-кольцо карточки, а не под полосу прокрутки. */
+    padding-block-end: var(--s2);
+    scrollbar-width: none;
+  }
+  .hscroll::-webkit-scrollbar { display: none; }
+  .hscroll > * {
+    flex: 0 0 min(76%, 300px);
+    scroll-snap-align: start;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hscroll { scroll-snap-type: none; }
+}
 
 /* ============ 8 · ОТЗЫВ ============ */
 .review { padding-block: var(--s24); }
@@ -1453,14 +1569,46 @@ a { color: inherit; }
   .card.tall { grid-row: span 2; }
 }
 @media (max-width: 560px) {
-  /* Было `grid-auto-rows: 180px` — жёсткая высота ряда. Карточка
-     «Ещё принимают» с четырьмя чипами в неё не влезала, а `overflow:
-     hidden` на .card молча срезал «Анестезиологию» по нижнему краю.
-     minmax позволяет ряду вырасти под содержимое. */
-  .fields__grid { grid-template-columns: 1fr; grid-auto-rows: minmax(180px, auto); }
+  /* Одна колонка растягивала семь карточек на 1230px прокрутки, и у
+     «Стоматологии» с «Офтальмологией» — единственных без вырезанного
+     животного — оставалось по полкарточки пустоты. Две колонки режут
+     секцию почти вдвое и возвращают мозаике неровный ритм, ради
+     которого она и существует.
+     minmax, а не жёсткая высота ряда: карточка «Ещё принимают» с
+     четырьмя чипами в фиксированный ряд не влезала, а `overflow: hidden`
+     на .card молча срезал «Анестезиологию» по нижнему краю. */
+  .fields__grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: minmax(140px, auto);
+    gap: var(--s2);
+    margin-top: var(--s8);
+  }
+  /* Пролёты пересобраны под две колонки: «Хирургия» и «Кардиология»
+     на десктопе широкие, но здесь широкая карточка занимает целый ряд
+     и оставляет дыру рядом с высокой соседкой. Высокими остаются две
+     с самыми крупными вырезами, во всю ширину — только карточка чипов. */
+  /* Классы .wide/.tall сбрасываются селектором из двух классов, поэтому
+     и мобильные пролёты пишутся двумя — иначе сброс их перебивает
+     и мозаика схлопывается в ровную сетку 2×4. */
   .card.wide, .card.tall { grid-column: auto; grid-row: auto; }
-  .card__pet { height: 88%; }
-  .card__label { max-width: 60%; }
+  .card.card--1, .card.card--3 { grid-row: span 2; }
+  .card.card--7 { grid-column: span 2; }
+
+  .card { padding: var(--s4); }
+  /* Номер уходит из угла в поток над названием. В углу карточки шириной
+     151px он ложился на хвост слова («Дерматология 03» читалось внахлёст),
+     а на «Хирургии» его полностью закрывала голова собаки. */
+  .card__num {
+    position: static;
+    order: -1;
+    margin-bottom: var(--s1);
+  }
+  .card__label { font-size: var(--t-body); max-width: none; }
+  /* Вырезы есть только у 01, 02, 03 и 06. Высокие карточки вдвое выше
+     ряда, поэтому их животное берёт меньшую долю высоты — иначе кот
+     на «Терапии» вырастает вдвое против собаки на «Хирургии» рядом. */
+  .card.card--1 .card__pet, .card.card--3 .card__pet { height: 52%; right: 0; }
+  .card--surface { gap: var(--s3); }
 }
 @media (max-width: 640px) { .fields { padding-block: var(--s16); } }
 
