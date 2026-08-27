@@ -1036,7 +1036,18 @@ a { color: inherit; }
    выбора это была просто дыра в 190px посреди тёмной панели. Сдвиг после
    клика инициирован самим человеком и происходит ниже пилюль — ничего
    из прочитанного не прыгает. */
-.triage__results { flex: 1 0 100%; margin-top: var(--s6); }
+/* Подсказка и все три вердикта лежат в ОДНОЙ ячейке сетки, друг поверх
+   друга. Пока они были обычными блоками, в момент переключения ответа
+   уходящая и приходящая карточки на четверть секунды оказывались в потоке
+   одновременно: блок вырастал с 243 до 486 px и схлопывался обратно,
+   а вся секция под ним дёргалась. В одной ячейке высота равна большей из
+   карточек — раскладка при подмене стоит на месте. */
+.triage__results {
+  flex: 1 0 100%;
+  margin-top: var(--s6);
+  display: grid;
+}
+.triage__results > * { grid-area: 1 / 1; }
 .triage__result {
   display: none;
   border-radius: var(--r-lg);
@@ -1044,14 +1055,13 @@ a { color: inherit; }
   /* Вердикт раньше подменялся мгновенно: человек кликает пилюлю и под ней
      скачком возникает плашка в пол-экрана. Это ровно тот случай, ради
      которого движение и нужно, — смягчить резкую подмену.
-     display в переходе + @starting-style ниже: без них переход из
-     display:none просто не стартует. Где не поддержано — остаётся
-     сегодняшнее мгновенное появление, ничего не ломается. */
+     Здесь описан УХОД: старый ответ уже не нужен, он просто гаснет за
+     160 мс, без сдвига — иначе уходящая и приходящая карточки едут
+     навстречу друг другу и рябит. allow-discrete держит карточку в
+     раскладке, пока она гаснет; где не поддержано — мгновенное скрытие. */
   opacity: 0;
-  transform: translateY(10px);
-  transition: opacity var(--dur-mid) var(--ease-out),
-              transform var(--dur-mid) var(--ease-out),
-              display var(--dur-mid) allow-discrete;
+  transition: opacity var(--dur-fast) var(--ease-out),
+              display var(--dur-fast) allow-discrete;
 }
 .triage__result--now   { background: var(--accent); color: var(--on-accent); }
 .triage__result--today { background: var(--paper);  color: var(--ink); }
@@ -1078,12 +1088,17 @@ a { color: inherit; }
 }
 /* Любая выбранная пилюля прячет подсказку и показывает свой результат. */
 .triage__radio:checked ~ .triage__results .triage__idle { display: none; }
+/* А это ПРИХОД: новый ответ поднимается и проявляется за 240 мс.
+   Дольше ухода намеренно — уходящее внимания не требует, приходящее требует.
+   Сдвиг живёт только в @starting-style: в обычном состоянии карточка
+   не смещена, поэтому уход её никуда не дёргает. */
 .triage__radio--now:checked   ~ .triage__results .triage__result--now,
 .triage__radio--today:checked ~ .triage__results .triage__result--today,
 .triage__radio--plan:checked  ~ .triage__results .triage__result--plan {
   display: block;
   opacity: 1;
-  transform: none;
+  transition: opacity var(--dur-mid) var(--ease-out),
+              transform var(--dur-mid) var(--ease-out);
 }
 @starting-style {
   .triage__radio--now:checked   ~ .triage__results .triage__result--now,
@@ -1354,10 +1369,10 @@ a { color: inherit; }
   .triage__option, .checklist__label, .faq__q::after { transition: none; }
   /* Меньше движения, а не ноль: смена прозрачности остаётся — она помогает
      заметить, что появился ответ, — а сдвиг и раскрытие высоты убираем. */
-  .triage__result {
-    transform: none;
-    transition: opacity var(--dur-mid) var(--ease-out),
-                display var(--dur-mid) allow-discrete;
+  .triage__radio--now:checked   ~ .triage__results .triage__result--now,
+  .triage__radio--today:checked ~ .triage__results .triage__result--today,
+  .triage__radio--plan:checked  ~ .triage__results .triage__result--plan {
+    transition: opacity var(--dur-mid) var(--ease-out);
   }
   @starting-style {
     .triage__radio--now:checked   ~ .triage__results .triage__result--now,
