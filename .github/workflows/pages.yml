@@ -1,0 +1,42 @@
+# Публикация статики на GitHub Pages.
+# Сборки нет — репозиторий отдаётся как есть, поэтому шага build не нужно.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Параллельные деплои не нужны: в очереди достаточно последнего коммита.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # enablement: true включает Pages сам, если в настройках репозитория
+      # он ещё не включён, — иначе пришлось бы идти в Settings руками.
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      # Отдаём весь репозиторий: index.html лежит в корне, ассеты рядом,
+      # все пути относительные — подпапка /dobrovet/ ничего не ломает.
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

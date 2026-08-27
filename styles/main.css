@@ -5,7 +5,13 @@
 /* ============ база ============ */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* Разрешает переход height/block-size к ключевому слову auto —
+     без этого ответ в FAQ раскрывается рывком. Где не поддержано
+     (Firefox), просто остаётся сегодняшнее мгновенное раскрытие. */
+  interpolate-size: allow-keywords;
+}
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 /* Плавающая навигация перекрывает верх секции при переходе по якорю.
@@ -101,7 +107,7 @@ a { color: inherit; }
 .btn--onpanel { background: var(--primary-lift); color: var(--ink); }
 .btn--ghost   { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 2px var(--control-line); }
 
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .btn:hover { transform: translateY(-2px); }
 }
 .btn:active { transform: translateY(0); }
@@ -138,7 +144,11 @@ a { color: inherit; }
   background: var(--paper);
   border-radius: var(--r-pill);
   box-shadow: 0 8px 32px rgb(19 26 46 / 0.10);
+  transition: transform var(--dur-base) var(--ease-out);
 }
+/* Уход наверх при скролле вниз. Состояние ставит main.js классом:
+   инлайновый transform из JS перетирал бы translateX(-50%) базы. */
+.nav--hidden { transform: translateX(-50%) translateY(-140%); }
 .nav__mark {
   font-family: var(--font-display);
   font-weight: 700;
@@ -167,7 +177,7 @@ a { color: inherit; }
   align-items: center;
   min-height: 44px;          /* зона клика, хотя на тач-экранах рейл скрыт */
 }
-@media (hover: hover) { .nav__links a:hover { color: var(--ink); } }
+@media (hover: hover) and (pointer: fine) { .nav__links a:hover { color: var(--ink); } }
 .nav__cta { flex: none; }
 .nav__cta-short { display: none; }
 
@@ -836,7 +846,7 @@ a { color: inherit; }
   align-items: center;
   min-height: 44px;
 }
-@media (hover: hover) { .quote__link:hover { text-decoration: underline; } }
+@media (hover: hover) and (pointer: fine) { .quote__link:hover { text-decoration: underline; } }
 /* Рейтинг набран крупнее источника — это то, за чем сюда смотрят. */
 .quote__rating {
   display: flex;
@@ -923,7 +933,7 @@ a { color: inherit; }
   text-decoration: none;
   margin-inline-end: var(--s4);
 }
-@media (hover: hover) { .contacts__link:hover { text-decoration: underline; } }
+@media (hover: hover) and (pointer: fine) { .contacts__link:hover { text-decoration: underline; } }
 .hours { border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .hours th, .hours td { padding-block: var(--s1); text-align: start; font-weight: 400; }
 .hours th { padding-inline-end: var(--s6); color: var(--panel-muted); }
@@ -949,7 +959,7 @@ a { color: inherit; }
 .footer__line { color: var(--muted); font-size: var(--t-small); }
 .footer__links { display: flex; flex-wrap: wrap; gap: var(--s6); font-size: var(--t-small); }
 .footer__links a { text-decoration: none; color: var(--ink); display: inline-flex; align-items: center; min-height: 44px; }
-@media (hover: hover) { .footer__links a:hover { color: var(--primary); } }
+@media (hover: hover) and (pointer: fine) { .footer__links a:hover { color: var(--primary); } }
 .footer__legal { font-size: var(--t-micro); color: var(--muted); }
 
 /* ============ мобильная липкая полоса ============ */
@@ -1008,7 +1018,7 @@ a { color: inherit; }
   cursor: pointer;
   transition: transform var(--dur-fast) var(--ease-out);
 }
-@media (hover: hover) { .triage__option:hover { transform: translateY(-2px); } }
+@media (hover: hover) and (pointer: fine) { .triage__option:hover { transform: translateY(-2px); } }
 .triage__radio:checked + .triage__option {
   background: var(--accent);
   color: var(--on-accent);
@@ -1027,7 +1037,22 @@ a { color: inherit; }
    клика инициирован самим человеком и происходит ниже пилюль — ничего
    из прочитанного не прыгает. */
 .triage__results { flex: 1 0 100%; margin-top: var(--s6); }
-.triage__result { display: none; border-radius: var(--r-lg); padding: var(--s8); }
+.triage__result {
+  display: none;
+  border-radius: var(--r-lg);
+  padding: var(--s8);
+  /* Вердикт раньше подменялся мгновенно: человек кликает пилюлю и под ней
+     скачком возникает плашка в пол-экрана. Это ровно тот случай, ради
+     которого движение и нужно, — смягчить резкую подмену.
+     display в переходе + @starting-style ниже: без них переход из
+     display:none просто не стартует. Где не поддержано — остаётся
+     сегодняшнее мгновенное появление, ничего не ломается. */
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity var(--dur-mid) var(--ease-out),
+              transform var(--dur-mid) var(--ease-out),
+              display var(--dur-mid) allow-discrete;
+}
 .triage__result--now   { background: var(--accent); color: var(--on-accent); }
 .triage__result--today { background: var(--paper);  color: var(--ink); }
 .triage__result--plan  {
@@ -1053,9 +1078,21 @@ a { color: inherit; }
 }
 /* Любая выбранная пилюля прячет подсказку и показывает свой результат. */
 .triage__radio:checked ~ .triage__results .triage__idle { display: none; }
-.triage__radio--now:checked   ~ .triage__results .triage__result--now   { display: block; }
-.triage__radio--today:checked ~ .triage__results .triage__result--today { display: block; }
-.triage__radio--plan:checked  ~ .triage__results .triage__result--plan  { display: block; }
+.triage__radio--now:checked   ~ .triage__results .triage__result--now,
+.triage__radio--today:checked ~ .triage__results .triage__result--today,
+.triage__radio--plan:checked  ~ .triage__results .triage__result--plan {
+  display: block;
+  opacity: 1;
+  transform: none;
+}
+@starting-style {
+  .triage__radio--now:checked   ~ .triage__results .triage__result--now,
+  .triage__radio--today:checked ~ .triage__results .triage__result--today,
+  .triage__radio--plan:checked  ~ .triage__results .triage__result--plan {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
 
 .triage__disclaimer {
   margin-top: var(--s6);
@@ -1222,7 +1259,7 @@ a { color: inherit; }
   box-shadow: inset 0 0 0 2px var(--control-line);
   background: var(--paper);
 }
-@media (hover: hover) { .checklist__label:hover { transform: translateX(2px); } }
+@media (hover: hover) and (pointer: fine) { .checklist__label:hover { transform: translateX(2px); } }
 .checklist__box:checked + .checklist__label { background: var(--surface); }
 .checklist__box:checked + .checklist__label::before {
   background: var(--accent);
@@ -1283,6 +1320,17 @@ a { color: inherit; }
 }
 .faq__item[open] .faq__q::after { transform: rotate(225deg) translate(-3px, -3px); }
 .faq__q:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
+/* Ответ раскрывается, а не появляется рывком. Высота — единственное, что
+   здесь можно анимировать: transform-эквивалента у раскрытия нет.
+   Держится на interpolate-size (см. html) и ::details-content;
+   где не поддержано — прежнее мгновенное раскрытие. */
+.faq__item::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition: block-size var(--dur-mid) var(--ease-out),
+              content-visibility var(--dur-mid) allow-discrete;
+}
+.faq__item[open]::details-content { block-size: auto; }
 .faq__a {
   padding: 0 var(--s6) var(--s6);
   color: var(--muted);
@@ -1296,7 +1344,7 @@ a { color: inherit; }
   font-weight: 600;
   text-decoration: none;
 }
-@media (hover: hover) { .faq__link:hover { text-decoration: underline; } }
+@media (hover: hover) and (pointer: fine) { .faq__link:hover { text-decoration: underline; } }
 @media (max-width: 640px) {
   .faq { padding-block: var(--s16); }
   .faq__q { font-size: var(--t-body); }
@@ -1304,6 +1352,21 @@ a { color: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   .triage__option, .checklist__label, .faq__q::after { transition: none; }
+  /* Меньше движения, а не ноль: смена прозрачности остаётся — она помогает
+     заметить, что появился ответ, — а сдвиг и раскрытие высоты убираем. */
+  .triage__result {
+    transform: none;
+    transition: opacity var(--dur-mid) var(--ease-out),
+                display var(--dur-mid) allow-discrete;
+  }
+  @starting-style {
+    .triage__radio--now:checked   ~ .triage__results .triage__result--now,
+    .triage__radio--today:checked ~ .triage__results .triage__result--today,
+    .triage__radio--plan:checked  ~ .triage__results .triage__result--plan {
+      transform: none;
+    }
+  }
+  .faq__item::details-content { transition: none; }
 }
 
 /* ============ движение ============ */

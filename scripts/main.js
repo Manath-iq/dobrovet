@@ -69,6 +69,8 @@
   /* Правило: скрытое состояние живёт ТОЛЬКО в CSS (.js-motion [data-reveal]).
      GSAP не выставляет opacity:0 инлайном — поэтому снятие класса в любой
      аварийной ситуации мгновенно возвращает весь контент. */
+  var WIDE = '(min-width: 901px)';
+
   function showEverything() {
     document.documentElement.classList.remove('js-motion');
     // Снять класс мало: ScrollTrigger при создании твина сразу пишет
@@ -76,10 +78,95 @@
     // тридцать с лишним блоков остаются невидимыми.
     try {
       if (!window.gsap) return;
-      var sel = ['[data-reveal]', '[data-hero-line]', '[data-hero-cutout]'];
+      var sel = ['[data-reveal]', '[data-hero-line]',
+                 '[data-hero-cutout]', '[data-hero-cutout] img'];
       sel.forEach(function (q) { window.gsap.killTweensOf(q); });
       window.gsap.set(sel, { clearProps: 'all' });
     } catch (e) {}
+  }
+
+  /* Вход hero. Порядок задан тем, что человеку нужно раньше:
+     надпись → строки заголовка выезжают из-под маски → вырез животного
+     встаёт поверх букв (единственный слом сетки) → лид и телефоны.
+     Позиции на таймлайне проставлены абсолютно, а не через '-=': так видно,
+     что кнопка звонка появляется примерно на 1.0s, а не «когда-то в конце». */
+  function heroEntrance(gsap, wide) {
+    var eyebrow = document.querySelector('.hero__eyebrow');
+    var lines   = gsap.utils.toArray('[data-hero-line]');
+    var cutout  = document.querySelector('[data-hero-cutout]');
+    var tail    = gsap.utils.toArray('.hero__lead[data-reveal], .hero__actions[data-reveal]');
+
+    gsap.set([eyebrow].concat(tail), { y: 18 });
+
+    var tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+    tl.to(eyebrow, { opacity: 1, y: 0, duration: 0.4 }, 0);
+    tl.from(lines, { yPercent: 112, duration: 0.7, stagger: 0.06 }, 0.06);
+
+    // Вырез приходит СНИЗУ и чуть подрастает, центр трансформации — в лапах:
+    // так он встаёт на землю, а не проявляется из воздуха. scale стартует
+    // с 0.97, не с нуля — из ничего в природе ничего не появляется.
+    if (wide && cutout) {
+      gsap.set(cutout, { yPercent: 8, scale: 0.97, transformOrigin: '50% 100%' });
+      tl.to(cutout, { opacity: 1, yPercent: 0, scale: 1, duration: 0.75, ease: 'power3.out' }, 0.45);
+    }
+
+    tl.to(tail, { opacity: 1, y: 0, duration: 0.45, stagger: 0.07 }, 0.52);
+
+    return tl;
+  }
+
+  /* Глубина слома сетки: вырез отстаёт от страницы при прокрутке.
+     Едет ВНУТРЕННЯЯ картинка, а не <figure> — у фигуры свой твин входа,
+     и два твина на одном свойстве одного элемента дрались бы.
+     Только на широком экране: на узком вырез стоит в потоке, слома нет. */
+  function heroDepth(gsap) {
+    var img = document.querySelector('[data-hero-cutout] img');
+    if (!img || !window.ScrollTrigger) return;
+
+    gsap.matchMedia().add(WIDE, function () {
+      gsap.to(img, {
+        yPercent: 6,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.5
+        }
+      });
+    });
+  }
+
+  /* Появление секций. ScrollTrigger.batch вместо тридцати отдельных
+     триггеров: соседи, пересёкшие край в один момент, всплывают одной
+     волной со сдвигом 60ms, а не вразнобой каждый сам по себе.
+     batchMax держит волну короткой — иначе плитка из девяти карточек
+     разъезжается на полторы секунды. */
+  function sectionReveals(gsap, wide) {
+    var cutout = document.querySelector('[data-hero-cutout]');
+    var items = gsap.utils.toArray('[data-reveal]').filter(function (el) {
+      if (el === cutout) return !wide;   // на узком экране вырез — обычная секция ниже сгиба
+      return !el.closest('.hero');
+    });
+    if (!items.length) return;
+
+    if (!window.ScrollTrigger) { gsap.to(items, { opacity: 1, duration: 0.4 }); return; }
+
+    gsap.set(items, { y: 22 });
+    window.ScrollTrigger.batch(items, {
+      start: 'top 88%',
+      once: true,
+      interval: 0.12,
+      batchMax: 6,
+      onEnter: function (batch) {
+        gsap.to(batch, {
+          opacity: 1, y: 0,
+          duration: 0.55, ease: 'power3.out', stagger: 0.06,
+          overwrite: true
+        });
+      }
+    });
   }
 
   function initMotion() {
@@ -90,29 +177,13 @@
 
     var gsap = window.gsap;
     var tl = null;
+    var wide = window.matchMedia(WIDE).matches;
 
     try {
       if (window.ScrollTrigger) gsap.registerPlugin(window.ScrollTrigger);
-
-      var heroReveals = gsap.utils.toArray('.hero [data-reveal]');
-      gsap.set(heroReveals, { y: 18 });
-
-      // Вход hero: строки заголовка выезжают из-под маски, затем вырез, затем текст.
-      tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-
-      tl.from('[data-hero-line]', { yPercent: 112, duration: 0.72, stagger: 0.07 });
-      tl.from('[data-hero-cutout]', { opacity: 0, scale: 0.94, y: 24, duration: 0.7 }, '-=0.35');
-      tl.to(heroReveals, { opacity: 1, y: 0, duration: 0.5, stagger: 0.08 }, '-=0.4');
-
-      // Появление секций по скроллу.
-      gsap.utils.toArray('[data-reveal]').forEach(function (el) {
-        if (el.closest('.hero')) return;
-        gsap.set(el, { y: 22 });
-        gsap.to(el, {
-          opacity: 1, y: 0, duration: 0.55, ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: 'top 92%', once: true }
-        });
-      });
+      tl = heroEntrance(gsap, wide);
+      sectionReveals(gsap, wide);
+      heroDepth(gsap);
     } catch (e) {
       showEverything();
       return;
@@ -211,19 +282,36 @@
   }
 
   /* ---------- нав: прячем при скролле вниз ---------- */
+  /* Читаем scrollY в обработчике, а пишем — в кадре анимации: без этого
+     стиль переписывался на каждое событие скролла. Состояние ставим классом,
+     переход живёт в CSS (.nav / .nav--hidden), инлайновых стилей нет.
+     Порог в 8px — чтобы пилюля не дёргалась на дрожании пальца и трекпада. */
   function initNav() {
     var nav = document.getElementById('nav');
     if (!nav || reduced) return;
-    var last = 0;
-    window.addEventListener('scroll', function () {
+
+    var last = window.scrollY;
+    var hidden = false;
+    var queued = false;
+
+    function apply() {
+      queued = false;
       var y = window.scrollY;
-      var hidden = y > 240 && y > last;
-      nav.style.transform = hidden
-        ? 'translateX(-50%) translateY(-140%)'
-        : 'translateX(-50%) translateY(0)';
+      if (Math.abs(y - last) < 8) return;
+
+      var next = y > 240 && y > last;
       last = y;
+      if (next === hidden) return;
+
+      hidden = next;
+      nav.classList.toggle('nav--hidden', hidden);
+    }
+
+    window.addEventListener('scroll', function () {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(apply);
     }, { passive: true });
-    nav.style.transition = 'transform 280ms cubic-bezier(0.22,1,0.36,1)';
   }
 
   function init() {
