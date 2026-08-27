@@ -48,19 +48,69 @@
 <meta property="og:locale" content="ru_RU">
 <!-- og:url и og:image ждут домена и реальных фото — CONTENT.md, «Ожидает данных» -->
 
+<!-- Разметка организации. openingHoursSpecification стоит здесь на ДЕМО-графике
+     (см. DEMO-DATA.md): поисковик показывает эти часы в карточке как факт,
+     поэтому вместе со снятием noindex их обязательно выверить у клиники.
+     url и image ждут домена — CONTENT.md, «Ожидает данных». -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "VeterinaryCare",
   "name": "ДоброВет",
+  "description": "Ветеринарная клиника в Нижнекамске: приём, УЗИ, рентген и анализы за один визит. Хирургия, стационар и ветаптека в том же здании.",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "ул. Первопроходцев, 26",
     "addressLocality": "Нижнекамск",
+    "addressRegion": "Республика Татарстан",
     "addressCountry": "RU"
   },
   "geo": { "@type": "GeoCoordinates", "latitude": 55.609512, "longitude": 51.813379 },
-  "telephone": "+79872152277"
+  "hasMap": "https://2gis.ru/nizhnekamsk/geo/55.609512%2C51.813379",
+  "telephone": "+79872152277",
+  "areaServed": { "@type": "City", "name": "Нижнекамск" },
+  "availableService": [
+    { "@type": "MedicalTherapy", "name": "Приём терапевта" },
+    { "@type": "MedicalTherapy", "name": "УЗИ и рентген" },
+    { "@type": "MedicalTherapy", "name": "Лабораторные анализы" },
+    { "@type": "MedicalTherapy", "name": "Хирургия и стационар" },
+    { "@type": "MedicalTherapy", "name": "Вакцинация и чипирование" },
+    { "@type": "MedicalTherapy", "name": "Груминг" }
+  ],
+  "sameAs": [
+    "https://vk.com/dobrovetnk",
+    "https://instagram.com/dobrovet.nk"
+  ],
+  "openingHoursSpecification": [
+    { "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+      "opens": "10:00", "closes": "20:00" },
+    { "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Sunday", "opens": "10:00", "closes": "15:00" }
+  ]
+}
+</script>
+
+<!-- FAQPage. Вопросы и ответы обязаны совпадать слово в слово с тем, что
+     видно на странице: расхождение — повод для санкций и просто обман. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "Где вы находитесь и как доехать?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Нижнекамск, ул. Первопроходцев, 26. Ориентир — ГСК «Автомобилист №3»." } },
+    { "@type": "Question", "name": "Что можно сделать за один визит?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Приём, УЗИ, рентген и анализы — в один визит и в одном здании. Там же хирургия, стационар и ветаптека, поэтому не нужно ездить между кабинетами по городу." } },
+    { "@type": "Question", "name": "Сколько стоит приём?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Первичный приём терапевта — 600 ₽: осмотр, консультация и план обследования. В пакетную цену операции уже входят наркоз, расходники, попона и наблюдение после." } },
+    { "@type": "Question", "name": "Питомцу плохо ночью — что делать?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Позвоните по любому из двух номеров. Клиника работает Пн–Сб 10:00–20:00, Вс 10:00–15:00; экстренные случаи принимаем вне очереди." } },
+    { "@type": "Question", "name": "Что взять с собой на приём?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Переноску или поводок, ветпаспорт, прошлые анализы и снимки, список лекарств." } },
+    { "@type": "Question", "name": "Как готовить питомца к операции?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Голодная диета 8–12 часов до наркоза, воду убрать за 2–3 часа. Точное время назовёт врач при записи." } }
+  ]
 }
 </script>
 </head>
@@ -77,7 +127,8 @@
   </a>
   <nav class="nav__links" aria-label="Разделы страницы">
     <a href="#zdanie">Что у нас есть</a>
-    <a href="#vizit">Как проходит визит</a>
+    <a href="#vrachi">Врачи</a>
+    <a href="#vizit">Визит</a>
     <a href="#tseny">Цены</a>
     <a href="#kontakty">Контакты</a>
   </nav>
@@ -124,7 +175,7 @@
     </p>
 
     <div class="hero__actions" data-reveal>
-      <a class="btn btn--accent btn--lg" href="#kontakty">Записаться на приём</a>
+      <a class="btn btn--accent btn--lg" href="#zapis">Записаться на приём</a>
       <a class="btn btn--onblue btn--lg" href="tel:+79872152277">+7 987 215-22-77</a>
     </div>
 
@@ -198,6 +249,9 @@
            и объявляются как «1 из 9». -->
       <div class="triage__group">
         <h3 class="triage__legend" id="triage-legend">Что происходит с питомцем?</h3>
+        <!-- Инструкция стоит НАД списком: она объясняет то, что ниже.
+             Под списком её читали уже после того, как выбор сделан. -->
+        <p class="triage__hint">Выберите пункт — подскажем, насколько это срочно.</p>
           <input class="triage__radio triage__radio--now" type="radio"
                  name="triage" id="triage-1">
           <label class="triage__option" for="triage-1">не дышит, задыхается, синеет язык</label>
@@ -257,7 +311,7 @@
             <a class="btn btn--onpanel btn--lg" href="tel:+79872152277">Записаться</a>
           </div>
 
-          <p class="triage__idle">Выберите пункт — подскажем, насколько это срочно.</p>
+          <p class="triage__idle">Ответ появится здесь.</p>
         </div>
 
         <p class="visually-hidden triage__announce" role="status" aria-live="polite"></p>
@@ -324,10 +378,81 @@
   </div>
 </section>
 
-<!-- ============ 4b · НАПРАВЛЕНИЯ ПРИЁМА ============ -->
-<section class="fields" aria-labelledby="fields-h2">
+<!-- ============ 5 · ВРАЧИ ============ -->
+<!-- ⚠️ ИМЕНА, СПЕЦИАЛИЗАЦИИ И СТАЖ ВЫДУМАНЫ (data-demo), фотографии
+     сгенерированы. Заменить на реальных врачей с их письменного
+     согласия на публикацию — DEMO-DATA.md. -->
+<section class="doctors" id="vrachi" aria-labelledby="doctors-h2">
   <div class="shell">
     <p class="section-num" aria-hidden="true">04</p>
+    <h2 class="doctors__title" id="doctors-h2" data-reveal>Кто принимает</h2>
+    <p class="doctors__lead" data-reveal>
+      Врач, который вас примет, объясняет, что видит, и почему предлагает
+      именно это лечение. Спросить можно всё — на приёме и после, по телефону.
+    </p>
+
+    <ul class="team">
+      <li class="teammate" data-reveal>
+        <figure class="teammate__media">
+          <img src="assets/photos/vrach-1.webp" width="760" height="950"
+               alt="Ветеринарный врач клиники" loading="lazy"
+               data-placeholder="заменить реальным фото врача">
+        </figure>
+        <p class="teammate__name" data-demo="имя выдумано">Сафина Гульнара Ринатовна</p>
+        <p class="teammate__role" data-demo="специализация и стаж выдуманы">Главный врач · терапевт · 14 лет в практике</p>
+      </li>
+      <li class="teammate" data-reveal>
+        <figure class="teammate__media">
+          <img src="assets/photos/vrach-2.webp" width="760" height="950"
+               alt="Ветеринарный врач клиники" loading="lazy"
+               data-placeholder="заменить реальным фото врача">
+        </figure>
+        <p class="teammate__name" data-demo="имя выдумано">Ковалёв Артём Сергеевич</p>
+        <p class="teammate__role" data-demo="специализация и стаж выдуманы">Хирург · анестезиолог · 11 лет в практике</p>
+      </li>
+      <li class="teammate" data-reveal>
+        <figure class="teammate__media">
+          <img src="assets/photos/vrach-3.webp" width="760" height="950"
+               alt="Ветеринарный врач клиники" loading="lazy"
+               data-placeholder="заменить реальным фото врача">
+        </figure>
+        <p class="teammate__name" data-demo="имя выдумано">Дементьева Ольга Витальевна</p>
+        <p class="teammate__role" data-demo="специализация и стаж выдуманы">УЗ-диагностика · кардиолог · 22 года в практике</p>
+      </li>
+    </ul>
+
+    <p class="doctors__note" data-reveal>
+      Направления приёма: терапия, хирургия, дерматология, офтальмология,
+      кардиология, стоматология, гинекология, аллергология, онкология,
+      анестезиология.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 6 · ОТЗЫВ ============ -->
+<section class="review" aria-labelledby="review-h2">
+  <div class="shell">
+    <h2 class="visually-hidden" id="review-h2">Отзыв</h2>
+    <figure class="quote" data-reveal>
+      <blockquote class="quote__text">
+        «Персонал вежливый, врачи всё подробно объясняют, видно, что животных любят.
+        Есть рентген — это тоже плюс.»
+      </blockquote>
+      <figcaption class="quote__meta">
+        <p class="quote__source">отзыв на 2ГИС · январь 2025</p>
+        <p class="quote__rating" data-demo="рейтинг и число отзывов выдуманы">
+          <span class="quote__score">4,8</span> на 2ГИС · 52 отзыва
+        </p>
+        <a class="quote__link" href="https://2gis.ru/nizhnekamsk" target="_blank" rel="noopener">Читать отзывы на 2ГИС →</a>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ 7 · НАПРАВЛЕНИЯ ПРИЁМА ============ -->
+<section class="fields" aria-labelledby="fields-h2">
+  <div class="shell">
+    <p class="section-num" aria-hidden="true">05</p>
     <h2 class="fields__title" id="fields-h2" data-reveal>С чем принимают</h2>
     <p class="fields__lead" data-reveal>
       Профильный врач принимает по записи. Позвоните — подскажем, к кому
@@ -371,7 +496,7 @@
         <span class="card__num" aria-hidden="true">06</span>
       </li>
       <li class="card card--7 wide card--surface" data-reveal>
-        <span class="card__label">Ещё направления</span>
+        <span class="card__label">Ещё принимают</span>
         <ul class="card__chips">
           <li>Гинекология и акушерство</li>
           <li>Аллергология</li>
@@ -383,10 +508,10 @@
   </div>
 </section>
 
-<!-- ============ 5 · КАК ПРОХОДИТ ВИЗИТ ============ -->
+<!-- ============ 8 · КАК ПРОХОДИТ ВИЗИТ ============ -->
 <section class="visit" id="vizit" aria-labelledby="visit-h2">
   <div class="shell">
-    <p class="section-num" aria-hidden="true">05</p>
+    <p class="section-num" aria-hidden="true">06</p>
     <h2 class="visit__title" id="visit-h2" data-reveal>Как проходит визит</h2>
 
     <ol class="steps">
@@ -442,51 +567,7 @@
   </div>
 </section>
 
-<!-- ============ 5b · ЧТО ВЗЯТЬ С СОБОЙ ============ -->
-<section class="prep" aria-labelledby="prep-h2">
-  <div class="shell prep__grid">
-    <div>
-      <p class="section-num" aria-hidden="true">06</p>
-      <h2 class="prep__title" id="prep-h2" data-reveal>Что взять с собой</h2>
-      <p class="prep__lead" data-reveal>
-        Отметки сохранятся в этом браузере — можно собраться заранее
-        и вернуться к списку перед выходом.
-      </p>
-      <button class="btn btn--ghost prep__reset" type="button" data-checklist-reset>
-        Снять все отметки
-      </button>
-    </div>
-
-    <ul class="checklist" data-reveal>
-        <li class="checklist__item">
-          <input class="checklist__box" type="checkbox" id="chk-perenoska" data-checklist="perenoska">
-          <label class="checklist__label" for="chk-perenoska">Переноска или поводок с ошейником</label>
-        </li>
-        <li class="checklist__item">
-          <input class="checklist__box" type="checkbox" id="chk-pasport" data-checklist="pasport">
-          <label class="checklist__label" for="chk-pasport">Ветеринарный паспорт, если он есть</label>
-        </li>
-        <li class="checklist__item">
-          <input class="checklist__box" type="checkbox" id="chk-analizy" data-checklist="analizy">
-          <label class="checklist__label" for="chk-analizy">Прошлые анализы, снимки и выписки</label>
-        </li>
-        <li class="checklist__item">
-          <input class="checklist__box" type="checkbox" id="chk-lekarstva" data-checklist="lekarstva">
-          <label class="checklist__label" for="chk-lekarstva">Список лекарств, которые питомец получает</label>
-        </li>
-        <li class="checklist__item">
-          <input class="checklist__box" type="checkbox" id="chk-voprosy" data-checklist="voprosy">
-          <label class="checklist__label" for="chk-voprosy">Список вопросов врачу — на приёме забывается</label>
-        </li>
-        <li class="checklist__item">
-          <input class="checklist__box" type="checkbox" id="chk-pled" data-checklist="pled">
-          <label class="checklist__label" for="chk-pled">Плед или знакомая игрушка, чтобы было спокойнее</label>
-        </li>
-    </ul>
-  </div>
-</section>
-
-<!-- ============ 6 · ЦЕНЫ · спек-лист ============ -->
+<!-- ============ 9 · ЦЕНЫ · спек-лист ============ -->
 <!-- ⚠️ ВСЕ ЦЕНЫ НИЖЕ ВЫДУМАНЫ (data-demo). Это средние по региону
      значения, поставленные только для просмотра вёрстки.
      Заменить на официальный прайс до публикации — DEMO-DATA.md. -->
@@ -603,61 +684,10 @@
   </div>
 </section>
 
-<!-- ============ 7 · ВРАЧИ ============ -->
-<!-- ⚠️ ИМЕНА, СПЕЦИАЛИЗАЦИИ И СТАЖ ВЫДУМАНЫ (data-demo), фотографии
-     сгенерированы. Заменить на реальных врачей с их письменного
-     согласия на публикацию — DEMO-DATA.md. -->
-<section class="doctors" aria-labelledby="doctors-h2">
-  <div class="shell">
-    <p class="section-num" aria-hidden="true">08</p>
-    <h2 class="doctors__title" id="doctors-h2" data-reveal>Кто принимает</h2>
-    <p class="doctors__lead" data-reveal>
-      Врач, который вас примет, объясняет, что видит, и почему предлагает
-      именно это лечение. Спросить можно всё — на приёме и после, по телефону.
-    </p>
-
-    <ul class="team">
-      <li class="teammate" data-reveal>
-        <figure class="teammate__media">
-          <img src="assets/photos/vrach-1.webp" width="760" height="950"
-               alt="Ветеринарный врач клиники" loading="lazy"
-               data-placeholder="заменить реальным фото врача">
-        </figure>
-        <p class="teammate__name" data-demo="имя выдумано">Сафина Гульнара Ринатовна</p>
-        <p class="teammate__role" data-demo="специализация и стаж выдуманы">Главный врач · терапевт · 14 лет в практике</p>
-      </li>
-      <li class="teammate" data-reveal>
-        <figure class="teammate__media">
-          <img src="assets/photos/vrach-2.webp" width="760" height="950"
-               alt="Ветеринарный врач клиники" loading="lazy"
-               data-placeholder="заменить реальным фото врача">
-        </figure>
-        <p class="teammate__name" data-demo="имя выдумано">Ковалёв Артём Сергеевич</p>
-        <p class="teammate__role" data-demo="специализация и стаж выдуманы">Хирург · анестезиолог · 11 лет в практике</p>
-      </li>
-      <li class="teammate" data-reveal>
-        <figure class="teammate__media">
-          <img src="assets/photos/vrach-3.webp" width="760" height="950"
-               alt="Ветеринарный врач клиники" loading="lazy"
-               data-placeholder="заменить реальным фото врача">
-        </figure>
-        <p class="teammate__name" data-demo="имя выдумано">Дементьева Ольга Витальевна</p>
-        <p class="teammate__role" data-demo="специализация и стаж выдуманы">УЗ-диагностика · кардиолог · 22 года в практике</p>
-      </li>
-    </ul>
-
-    <p class="doctors__note" data-reveal>
-      Направления приёма: терапия, хирургия, дерматология, офтальмология,
-      кардиология, стоматология, гинекология, аллергология, онкология,
-      анестезиология.
-    </p>
-  </div>
-</section>
-
-<!-- ============ 7b · ВОПРОСЫ ============ -->
+<!-- ============ 10 · ВОПРОСЫ ============ -->
 <section class="faq" aria-labelledby="faq-h2">
   <div class="shell">
-    <p class="section-num" aria-hidden="true">09</p>
+    <p class="section-num" aria-hidden="true">08</p>
     <h2 class="faq__title" id="faq-h2" data-reveal>Частые вопросы</h2>
     <div class="faq__list" data-reveal>
       <details class="faq__item">
@@ -696,27 +726,51 @@
   </div>
 </section>
 
-<!-- ============ 8 · ОТЗЫВ ============ -->
-<section class="review" aria-labelledby="review-h2">
-  <div class="shell">
-    <h2 class="visually-hidden" id="review-h2">Отзыв</h2>
-    <figure class="quote" data-reveal>
-      <blockquote class="quote__text">
-        «Персонал вежливый, врачи всё подробно объясняют, видно, что животных любят.
-        Есть рентген — это тоже плюс.»
-      </blockquote>
-      <figcaption class="quote__meta">
-        <p class="quote__source">отзыв на 2ГИС · январь 2025</p>
-        <p class="quote__rating" data-demo="рейтинг и число отзывов выдуманы">
-          <span class="quote__score">4,8</span> на 2ГИС · 52 отзыва
-        </p>
-        <a class="quote__link" href="https://2gis.ru/nizhnekamsk" target="_blank" rel="noopener">Читать отзывы на 2ГИС →</a>
-      </figcaption>
-    </figure>
+<!-- ============ 11 · ЧТО ВЗЯТЬ С СОБОЙ ============ -->
+<section class="prep" aria-labelledby="prep-h2">
+  <div class="shell prep__grid">
+    <div>
+      <p class="section-num" aria-hidden="true">09</p>
+      <h2 class="prep__title" id="prep-h2" data-reveal>Что взять с собой</h2>
+      <p class="prep__lead" data-reveal>
+        Отметки сохранятся в этом браузере — можно собраться заранее
+        и вернуться к списку перед выходом.
+      </p>
+      <button class="btn btn--ghost prep__reset" type="button" data-checklist-reset>
+        Снять все отметки
+      </button>
+    </div>
+
+    <ul class="checklist" data-reveal>
+        <li class="checklist__item">
+          <input class="checklist__box" type="checkbox" id="chk-perenoska" data-checklist="perenoska">
+          <label class="checklist__label" for="chk-perenoska">Переноска или поводок с ошейником</label>
+        </li>
+        <li class="checklist__item">
+          <input class="checklist__box" type="checkbox" id="chk-pasport" data-checklist="pasport">
+          <label class="checklist__label" for="chk-pasport">Ветеринарный паспорт, если он есть</label>
+        </li>
+        <li class="checklist__item">
+          <input class="checklist__box" type="checkbox" id="chk-analizy" data-checklist="analizy">
+          <label class="checklist__label" for="chk-analizy">Прошлые анализы, снимки и выписки</label>
+        </li>
+        <li class="checklist__item">
+          <input class="checklist__box" type="checkbox" id="chk-lekarstva" data-checklist="lekarstva">
+          <label class="checklist__label" for="chk-lekarstva">Список лекарств, которые питомец получает</label>
+        </li>
+        <li class="checklist__item">
+          <input class="checklist__box" type="checkbox" id="chk-voprosy" data-checklist="voprosy">
+          <label class="checklist__label" for="chk-voprosy">Список вопросов врачу — на приёме забывается</label>
+        </li>
+        <li class="checklist__item">
+          <input class="checklist__box" type="checkbox" id="chk-pled" data-checklist="pled">
+          <label class="checklist__label" for="chk-pled">Плед или знакомая игрушка, чтобы было спокойнее</label>
+        </li>
+    </ul>
   </div>
 </section>
 
-<!-- ============ 9 · КОНТАКТЫ ============ -->
+<!-- ============ 12 · ЗАПИСЬ, КОНТАКТЫ И КАРТА ============ -->
 <section class="contacts" id="kontakty" aria-labelledby="contacts-h2">
   <div class="shell">
     <p class="section-num section-num--panel" aria-hidden="true">10</p>
@@ -724,40 +778,154 @@
       Приезжайте — посмотрим и скажем честно, что происходит.
     </h2>
 
-    <div class="contacts__grid">
-      <div class="contacts__block" data-reveal>
-        <p class="contacts__label">Телефоны</p>
-        <a class="contacts__big" href="tel:+79872152277">+7 987 215-22-77</a>
-        <a class="contacts__big" href="tel:+79172446954">+7 917 244-69-54</a>
-      </div>
+    <div class="contacts__layout">
 
-      <div class="contacts__block" data-reveal>
-        <p class="contacts__label">Адрес</p>
-        <p class="contacts__text">
-          ул. Первопроходцев, 26, Нижнекамск<br>
-          <span class="contacts__muted">ориентир: ГСК «Автомобилист №3»</span>
+      <!-- ⚠️ ДЕМО-ФОРМА (data-demo). Заявка НИКУДА НЕ УХОДИТ: у сайта нет
+           бэкенда, обработчик перехватывает submit и показывает экран
+           «принято» локально. Это витрина для показа владельцу, и она
+           живёт под noindex вместе с остальными демо-данными.
+           Перед публикацией — либо подключить приём заявок (почта,
+           CRM, Telegram-бот) и убрать data-demo, либо снять форму
+           целиком: форма, которая молча съедает обращение человека
+           с больным животным, хуже отсутствия формы.
+           Заодно понадобится политика обработки персональных данных —
+           без неё сбор имени и телефона незаконен (152-ФЗ). -->
+      <div class="booking" id="zapis" data-demo="форма не подключена к приёму заявок">
+        <h3 class="booking__title">Записаться на приём</h3>
+        <p class="booking__lead">
+          Оставьте имя и номер — перезвоним в рабочие часы, подберём время
+          и скажем, нужна ли подготовка.
         </p>
-        <a class="contacts__link" href="https://2gis.ru/nizhnekamsk/geo/55.609512%2C51.813379" target="_blank" rel="noopener">Построить маршрут →</a>
+
+        <form class="bform" data-booking novalidate>
+          <div class="bform__row">
+            <label class="bform__label" for="b-name">Как вас зовут</label>
+            <input class="bform__input" id="b-name" name="name" type="text"
+                   autocomplete="name" required
+                   aria-describedby="b-name-err" placeholder="Айгуль">
+            <p class="bform__err" id="b-name-err" hidden>Напишите, как к вам обращаться</p>
+          </div>
+
+          <div class="bform__row">
+            <label class="bform__label" for="b-tel">Телефон</label>
+            <input class="bform__input" id="b-tel" name="tel" type="tel"
+                   autocomplete="tel" inputmode="tel" required
+                   aria-describedby="b-tel-err" placeholder="+7 900 000-00-00">
+            <p class="bform__err" id="b-tel-err" hidden>Нужен номер, на который можно перезвонить</p>
+          </div>
+
+          <div class="bform__row">
+            <label class="bform__label" for="b-when">Когда удобно</label>
+            <select class="bform__input bform__select" id="b-when" name="when">
+              <option value="Сегодня">Сегодня</option>
+              <option value="Завтра">Завтра</option>
+              <option value="На этой неделе">На этой неделе</option>
+              <option value="Перезвоните, обсудим">Перезвоните, обсудим</option>
+            </select>
+          </div>
+
+          <div class="bform__row bform__row--wide">
+            <label class="bform__label" for="b-pet">Питомец и что беспокоит
+              <span class="bform__opt">— необязательно</span></label>
+            <textarea class="bform__input bform__area" id="b-pet" name="pet" rows="2"
+                      placeholder="Кот, 6 лет, не ест вторые сутки"></textarea>
+          </div>
+
+          <button class="btn btn--accent btn--lg bform__submit" type="submit">
+            Отправить заявку
+          </button>
+
+          <p class="bform__fine">
+            Если питомцу плохо прямо сейчас — не ждите звонка,
+            <a class="bform__tel" href="tel:+79872152277">позвоните сами</a>.
+          </p>
+        </form>
+
+        <!-- Экран после отправки. Появляется вместо формы, фокус уходит сюда,
+             текст читается скринридером через role="status". -->
+        <div class="booking__done" data-booking-done role="status" tabindex="-1" hidden>
+          <p class="booking__done-title">Заявка принята</p>
+          <p class="booking__done-text" data-booking-echo></p>
+          <button class="btn btn--ghost booking__again" type="button" data-booking-again>
+            Отправить ещё одну
+          </button>
+        </div>
+
+        <div class="booking__alt">
+          <p class="booking__alt-label">Или напишите</p>
+          <div class="booking__alt-row">
+            <!-- ⚠️ ДЕМО: номер WhatsApp и наличие Telegram клиникой не подтверждены,
+                 ссылки собраны из основного телефона — CONTENT.md, «Ожидает данных». -->
+            <a class="btn btn--onpanel booking__alt-btn"
+               href="https://wa.me/79872152277" target="_blank" rel="noopener"
+               data-demo="номер WhatsApp не подтверждён">WhatsApp</a>
+            <a class="btn btn--onpanel booking__alt-btn"
+               href="https://t.me/+79872152277" target="_blank" rel="noopener"
+               data-demo="Telegram не подтверждён">Telegram</a>
+            <a class="btn btn--onpanel booking__alt-btn"
+               href="https://vk.com/dobrovetnk" target="_blank" rel="noopener">ВКонтакте</a>
+          </div>
+        </div>
       </div>
 
-      <!-- ⚠️ ГРАФИК ВЫДУМАН (data-demo): в трёх справочниках три разные
-           версии, клиника ни одну не подтвердила. Держать в паре
-           с scripts/config.js — оттуда считается живой статус в hero. -->
-      <div class="contacts__block" data-reveal>
-        <p class="contacts__label">Часы работы</p>
-        <table class="hours" data-demo="график не подтверждён">
-          <tbody>
-            <tr><th scope="row">Пн–Сб</th><td>10:00–20:00</td></tr>
-            <tr><th scope="row">Вс</th><td>10:00–15:00</td></tr>
-          </tbody>
-        </table>
-        <p class="contacts__muted">Экстренные случаи принимаем вне очереди.</p>
-      </div>
+      <div class="contacts__grid">
+        <div class="contacts__block contacts__block--phones" data-reveal>
+          <p class="contacts__label">Телефоны</p>
+          <a class="contacts__big" href="tel:+79872152277">+7 987 215-22-77</a>
+          <a class="contacts__big" href="tel:+79172446954">+7 917 244-69-54</a>
+        </div>
 
-      <div class="contacts__block" data-reveal>
-        <p class="contacts__label">Соцсети</p>
-        <a class="contacts__link" href="https://vk.com/dobrovetnk" target="_blank" rel="noopener">ВКонтакте →</a>
-        <a class="contacts__link" href="https://instagram.com/dobrovet.nk" target="_blank" rel="noopener">Instagram →</a>
+        <!-- ⚠️ ГРАФИК ВЫДУМАН (data-demo): в трёх справочниках три разные
+             версии, клиника ни одну не подтвердила. Держать в паре
+             с scripts/config.js — оттуда считается живой статус в hero. -->
+        <div class="contacts__block" data-reveal>
+          <p class="contacts__label">Часы работы</p>
+          <table class="hours" data-demo="график не подтверждён">
+            <tbody>
+              <tr><th scope="row">Пн–Сб</th><td>10:00–20:00</td></tr>
+              <tr><th scope="row">Вс</th><td>10:00–15:00</td></tr>
+            </tbody>
+          </table>
+          <p class="contacts__muted">Экстренные случаи принимаем вне очереди.</p>
+        </div>
+
+        <div class="contacts__block" data-reveal>
+          <p class="contacts__label">Адрес</p>
+          <p class="contacts__text">
+            ул. Первопроходцев, 26, Нижнекамск<br>
+            <span class="contacts__muted">ориентир: ГСК «Автомобилист №3»</span>
+          </p>
+          <a class="contacts__link" href="https://2gis.ru/nizhnekamsk/geo/55.609512%2C51.813379" target="_blank" rel="noopener">Построить маршрут →</a>
+        </div>
+
+        <div class="contacts__block" data-reveal>
+          <p class="contacts__label">Соцсети</p>
+          <a class="contacts__link" href="https://vk.com/dobrovetnk" target="_blank" rel="noopener">ВКонтакте →</a>
+          <a class="contacts__link" href="https://instagram.com/dobrovet.nk" target="_blank" rel="noopener">Instagram →</a>
+        </div>
+
+        <!-- Карта настоящая: тайлы OpenStreetMap, перекрашенные в палитру
+             сайта, пин стоит по координатам из CONTENT.md. Картинка лежит
+             локально — в рантайме ни одного внешнего запроса, ни одного
+             трекера. Атрибуция ODbL обязательна и стоит в подписи. -->
+        <figure class="mapcard contacts__block" data-reveal>
+          <a class="mapcard__link"
+             href="https://2gis.ru/nizhnekamsk/geo/55.609512%2C51.813379"
+             target="_blank" rel="noopener">
+            <img class="mapcard__img"
+                 src="assets/photos/karta.webp"
+                 srcset="assets/photos/karta-640.webp 640w,
+                         assets/photos/karta.webp 1280w"
+                 sizes="(max-width: 900px) 100vw, 40vw"
+                 width="1280" height="860" loading="lazy" decoding="async"
+                 alt="Карта: клиника на улице Первопроходцев, 26, рядом гаражный кооператив">
+            <span class="mapcard__cta">Построить маршрут →</span>
+          </a>
+          <figcaption class="mapcard__caption">
+            Карта © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>
+          </figcaption>
+        </figure>
+
       </div>
     </div>
   </div>
@@ -765,7 +933,7 @@
 
 </main>
 
-<!-- ============ 10 · ФУТЕР · мастхед ============ -->
+<!-- ============ 13 · ФУТЕР · мастхед ============ -->
 <footer class="footer">
   <div class="shell footer__inner">
     <p class="footer__mark">ДоброВет</p>
@@ -774,6 +942,7 @@
     </p>
     <nav class="footer__links" aria-label="Ссылки в подвале">
       <a href="#zdanie">Что у нас есть</a>
+      <a href="#vrachi">Врачи</a>
       <a href="#vizit">Визит</a>
       <a href="#tseny">Цены</a>
       <a href="#kontakty">Контакты</a>
@@ -787,9 +956,12 @@
 </footer>
 
 <!-- ============ мобильная липкая полоса ============ -->
-<div class="stickybar">
+<!-- Появляется только когда hero ушёл с экрана — иначе на первом же
+     экране три кнопки «позвонить» подряд. Класс снимает main.js;
+     без JS полоса видна всегда, как и раньше. -->
+<div class="stickybar" data-stickybar>
   <a class="btn btn--accent stickybar__btn" href="tel:+79872152277">Позвонить</a>
-  <a class="btn btn--ghost stickybar__btn" href="#kontakty">Как доехать</a>
+  <a class="btn btn--ghost stickybar__btn" href="#zapis">Записаться</a>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>

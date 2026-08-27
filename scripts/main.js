@@ -314,6 +314,96 @@
     }, { passive: true });
   }
 
+  /* ---------- липкая полоса: появляется, когда hero ушёл ---------- */
+  /* На первом экране в hero уже есть «Записаться» и телефон. Полоса
+     добавляла к ним ещё две кнопки и накрывала вырез животного. Прячем её,
+     пока hero занимает экран. Если IntersectionObserver недоступен —
+     ничего не делаем, и полоса ведёт себя как раньше: видна всегда. */
+  function initStickybar() {
+    var bar = document.querySelector('[data-stickybar]');
+    var hero = document.querySelector('.hero');
+    if (!bar || !hero || !('IntersectionObserver' in window)) return;
+
+    bar.classList.add('stickybar--off');
+    new IntersectionObserver(function (entries) {
+      bar.classList.toggle('stickybar--off', entries[0].isIntersecting);
+    }, { rootMargin: '-60% 0px 0px 0px' }).observe(hero);
+  }
+
+  /* ---------- заявка на приём ---------- */
+  /* ⚠️ ДЕМО. Заявка НИКУДА НЕ УХОДИТ: бэкенда у сайта нет, обработчик
+     перехватывает submit и показывает экран «принято» локально. Это
+     витрина, она живёт под noindex вместе с остальными демо-данными.
+     Чтобы подключить приём по-настоящему, менять надо ровно одно место —
+     блок ОТПРАВКА ниже. Валидация, ошибки, экран успеха и фокус уже
+     настоящие и переезжают как есть.
+     Экран успеха намеренно повторяет телефон: если человек попал сюда
+     с больным животным, у него всегда должен остаться живой путь. */
+  function initBooking() {
+    var form  = document.querySelector('[data-booking]');
+    var done  = document.querySelector('[data-booking-done]');
+    var echo  = document.querySelector('[data-booking-echo]');
+    var again = document.querySelector('[data-booking-again]');
+    if (!form || !done) return;
+
+    var nameEl = form.querySelector('#b-name');
+    var telEl  = form.querySelector('#b-tel');
+    var whenEl = form.querySelector('#b-when');
+
+    function mark(input, bad) {
+      var row = input.closest('.bform__row');
+      var err = row ? row.querySelector('.bform__err') : null;
+      if (row) row.classList.toggle('bform__row--bad', bad);
+      if (err) err.hidden = !bad;
+      input.setAttribute('aria-invalid', bad ? 'true' : 'false');
+    }
+
+    /* Считаем цифры, а не сверяем формат: «+7 987…», «8987…» и «987…» —
+       это один и тот же номер, и придираться к скобкам здесь не за что. */
+    function telOk(v) { return (String(v).match(/\d/g) || []).length >= 10; }
+
+    [nameEl, telEl].forEach(function (el) {
+      el.addEventListener('input', function () { mark(el, false); });
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var badName = !nameEl.value.trim();
+      var badTel  = !telOk(telEl.value);
+      mark(nameEl, badName);
+      mark(telEl, badTel);
+
+      if (badName || badTel) {
+        (badName ? nameEl : telEl).focus();
+        return;
+      }
+
+      /* ===== ОТПРАВКА ===== здесь появится fetch на приёмник заявок ===== */
+
+      if (echo) {
+        echo.textContent = nameEl.value.trim() + ', перезвоним на ' +
+          telEl.value.trim() + ' в рабочие часы — вариант «' +
+          whenEl.value.toLowerCase() + '». Если станет хуже раньше, ' +
+          'звоните сами: +7 987 215-22-77.';
+      }
+      form.hidden = true;
+      done.hidden = false;
+      done.focus();
+    });
+
+    if (again) {
+      again.addEventListener('click', function () {
+        form.reset();
+        mark(nameEl, false);
+        mark(telEl, false);
+        done.hidden = true;
+        form.hidden = false;
+        nameEl.focus();
+      });
+    }
+  }
+
   function init() {
     renderStatus();
     setInterval(renderStatus, 60000);
@@ -321,6 +411,8 @@
     initNav();
     initChecklist();
     initTriage();
+    initStickybar();
+    initBooking();
   }
 
   if (document.readyState === 'loading') {

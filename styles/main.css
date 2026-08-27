@@ -31,6 +31,11 @@ body {
   overflow-x: hidden;
 }
 
+/* Любой display в классе перебивает браузерное `[hidden] { display: none }`
+   — и элемент, спрятанный атрибутом, остаётся на экране. Так экран
+   «Заявка принята» показывался под незаполненной формой. */
+[hidden] { display: none !important; }
+
 h1, h2, h3, p, ul, ol, figure, blockquote, table { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
 img { max-width: 100%; display: block; }
@@ -206,7 +211,11 @@ a { color: inherit; }
 .hero {
   background: var(--primary);
   color: var(--on-primary);
-  padding-block: calc(var(--s32) + var(--s12)) var(--s24);
+  /* Было 176px сверху и 96px снизу: на ноутбуке 1440×900 hero вырастал
+     до 1091px, и кнопка «Записаться» с телефоном оказывались ЗА сгибом —
+     первый экран заканчивался на слове «честно». Экран у клиники должен
+     заканчиваться действием, а не буквами. */
+  padding-block: calc(var(--s24) + var(--s6)) var(--s16);
   border-radius: 0 0 var(--r-xl) var(--r-xl);
   position: relative;
   overflow: hidden;
@@ -227,7 +236,12 @@ a { color: inherit; }
 }
 .hero__title {
   font-family: var(--font-display);
-  font-size: var(--t-hero);
+  /* Вторая половина той же задачи: заголовок в четыре строки — самая
+     высокая часть первого экрана, и он обязан считаться с ВЫСОТОЙ окна,
+     а не только с шириной. 11.5vh срабатывает только на низких окнах
+     (900px → 103px вместо 118px); на мобильном min() всегда выбирает
+     --t-hero, так что там ничего не меняется. */
+  font-size: min(var(--t-hero), 11.5vh);
   font-weight: 800;
   /* кириллица: floor 1.05, не латинские 0.9 — иначе «у», «д», «ц» режутся */
   line-height: 1.05;
@@ -243,7 +257,12 @@ a { color: inherit; }
   margin-bottom: -0.09em;
 }
 .hero__line-in { display: block; }
-.hero__line--indent { padding-inline-start: 12%; }
+/* Было 12%: строка «Считаем» уезжала вправо ровно настолько, что вырез
+   накрывал её последнюю букву целиком — слово читалось как «Считаеı».
+   Слом сетки должен перекрывать заголовок, а не съедать из него букву.
+   Отступ уменьшен, а сам вырез расширен (см. .hero__cutout): наезд стал
+   больше прежнего, но приходится на воздух за словом, а не на букву. */
+.hero__line--indent { padding-inline-start: 10%; }
 
 /* ЕДИНСТВЕННЫЙ намеренный слом сетки: вырез уходит за правый край
    и ложится поверх последних строк заголовка. */
@@ -260,8 +279,8 @@ a { color: inherit; }
      Правый вылет убран: при вылете кадр приходилось расширять до 800px,
      и тогда лапы обрезал скруглённый низ секции. */
   right: 0;
-  top: 5%;
-  width: min(57%, 720px);
+  top: 4%;
+  width: min(60%, 800px);
   aspect-ratio: 1120 / 1223;
   margin: 0;
   pointer-events: none;
@@ -497,12 +516,16 @@ a { color: inherit; }
   margin-top: var(--s16);
 }
 .tile {
+  position: relative;
   border-radius: var(--r-lg);
   padding: var(--s6);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: var(--s4);
+  /* Название прижато к низу плитки, как подпись на афише. Раньше здесь
+     стоял space-between, и вторым полюсом был номер — из-за этого номер
+     набирался в 46px и оказывался крупнее самого названия кабинета. */
+  justify-content: flex-end;
+  gap: var(--s2);
   overflow: hidden;
   min-width: 0;
 }
@@ -515,22 +538,26 @@ a { color: inherit; }
 .tile--paper { background: var(--paper); color: var(--ink); }
 .tile--accent { background: var(--accent); color: var(--on-accent); }
 .tile--panel { background: var(--panel); color: var(--on-panel); }
+/* Номер — маркер в углу, а не содержание плитки. Крупный номер выигрывал
+   у названия кабинета, хотя название и есть единственное, что здесь важно.
+   Контраст на всех трёх подложках плиток при 0.7: ink/paper 6.41,
+   ink/accent 5.73, on-panel/panel 8.94 — с запасом к порогу 4.5. */
 .tile__num {
+  position: absolute;
+  top: var(--s4);
+  inset-inline-end: var(--s6);
   font-family: var(--font-display);
-  font-size: clamp(30px, 3vw, 46px);
+  font-size: var(--t-micro);
   font-weight: 700;
   line-height: 1;
+  letter-spacing: 0.08em;
   font-variant-numeric: tabular-nums;
-  /* Было 0.3 — 1.90 на лайме и 1.94 на белом при пороге 3.0 для крупного
-     кегля. Номер перестаёт читаться и выглядит как сбой отрисовки. */
-  opacity: 0.5;
+  opacity: 0.7;
 }
 .tile__name { font-size: var(--t-h3); font-weight: 600; line-height: 1.2; }
-.tile__note {
-  font-size: var(--t-micro);
-  opacity: 0.65;
-  margin-top: calc(-1 * var(--s3));
-}
+/* Было 13px с opacity 0.65: единственное уточнение на всю мозаику
+   набиралось мельче всего, что на ней есть. */
+.tile__note { font-size: var(--t-small); opacity: 0.8; }
 
 @media (max-width: 1000px) {
   .tiles { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 160px; }
@@ -539,9 +566,14 @@ a { color: inherit; }
 }
 @media (max-width: 520px) {
   .rooms { padding-block: var(--s16); margin-inline: var(--s3); }
-  .tiles { grid-template-columns: 1fr; grid-auto-rows: 150px; margin-top: var(--s8); }
-  .tile--wide, .tile--tall, .tile--photo { grid-column: auto; grid-row: auto; }
-  .tile--photo { min-height: 200px; }
+  /* Было 150px на ряд: название переехало вниз плитки, и над ним
+     оставалось полплитки пустоты — шесть слов растягивались на 900px
+     прокрутки. 96px делают из мозаики компактный список. */
+  .tiles { grid-template-columns: 1fr; grid-auto-rows: 96px; margin-top: var(--s8); }
+  .tile--wide, .tile--tall { grid-column: auto; grid-row: auto; }
+  /* Фото занимает два ряда, а не тянется min-height: ряд здесь жёсткий
+     (96px), и элемент выше ряда просто уезжал под следующую плитку. */
+  .tile--photo { grid-column: auto; grid-row: span 2; }
 }
 
 /* ============ 5 · КАК ПРОХОДИТ ВИЗИТ ============ */
@@ -569,10 +601,15 @@ a { color: inherit; }
   gap: var(--s4);
 }
 .step__media { margin: 0; }
+/* Номер и заголовок стояли в одном ряду по базовой линии. Длинные шаги
+   («Диагностика в тот же визит») переносились в две строки рядом с
+   номером, и четыре карточки расходились по высоте текста. Номер
+   отдельной строкой сверху — заголовки всех четырёх стартуют одинаково. */
 .step__head {
   display: flex;
-  align-items: baseline;
-  gap: var(--s3);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s1);
 }
 .step__num {
   font-family: var(--font-display);
@@ -742,7 +779,15 @@ a { color: inherit; }
   }
   .pricelist tbody th,
   .pricelist tbody td { border: 0; padding-block: 0; padding-inline-end: 0; }
-  .pricelist td.price { text-align: start; margin-top: var(--s2); }
+  /* В столбик цена шла тем же кеглем, что название услуги, и терялась
+     третьей строкой. Единственное число в строке должно быть заметно. */
+  .pricelist td.price {
+    text-align: start;
+    margin-top: var(--s2);
+    font-size: var(--t-lead);
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
   /* Заголовок группы остаётся отдельной строкой с рамкой снизу. */
   .pricelist .pricegroup__head th { padding-block: var(--s8) var(--s2); border: 0; }
   .pricelist .pricegroup:first-of-type .pricegroup__head th { padding-top: var(--s4); }
@@ -885,11 +930,20 @@ a { color: inherit; }
   letter-spacing: -0.02em;
   max-width: 20ch;
 }
+/* Закрывающая секция держит три вещи разом: заявку, координаты и карту.
+   Форма слева и крупнее — это единственное действие на странице, которое
+   можно совершить, не выходя из неё. */
+.contacts__layout {
+  display: grid;
+  grid-template-columns: minmax(340px, 36%) 1fr;
+  gap: var(--s6);
+  align-items: start;
+  margin-top: var(--s16);
+}
 .contacts__grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--s3);
-  margin-top: var(--s16);
 }
 /* Колонки стали карточками: на тёмной панели плоский текст в четыре
    столбца читался как подвал, а это закрывающая секция. */
@@ -939,11 +993,159 @@ a { color: inherit; }
 .hours th { padding-inline-end: var(--s6); color: var(--panel-muted); }
 .hours td { color: var(--on-panel); }
 
-@media (max-width: 980px) { .contacts__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 980px) {
+  .contacts__layout { grid-template-columns: 1fr; }
+}
 @media (max-width: 560px) {
   .contacts { padding-block: var(--s16); margin-inline: var(--s3); }
-  .contacts__grid { grid-template-columns: 1fr; gap: var(--s2); margin-top: var(--s8); }
+  .contacts__layout { margin-top: var(--s8); gap: var(--s3); }
+  .contacts__grid { grid-template-columns: 1fr; gap: var(--s2); }
 }
+
+/* ============ ЗАЯВКА НА ПРИЁМ ============ */
+/* ⚠️ ДЕМО: форма никуда не отправляет — см. комментарий над блоком
+   в index.html. Верстается по-настоящему, чтобы её можно было
+   подключить к бэкенду одной правкой обработчика. */
+.booking {
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: var(--r-xl);
+  padding: var(--s8);
+  /* Секция задаёт --focus: var(--accent) для тёмной панели. На белой
+     карточке лайм даёт 1.31 — кольцо фокуса исчезает. Возвращаем синий. */
+  --focus: var(--primary);
+}
+.booking__title {
+  font-family: var(--font-display);
+  font-size: var(--t-h3);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+.booking__lead {
+  margin-top: var(--s3);
+  color: var(--muted);
+  font-size: var(--t-small);
+  max-width: 40ch;
+}
+
+.bform {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s4);
+  margin-top: var(--s6);
+}
+.bform__row { display: grid; gap: var(--s2); min-width: 0; }
+.bform__row--wide,
+.bform__submit,
+.bform__fine { grid-column: 1 / -1; }
+.bform__label { font-size: var(--t-small); font-weight: 600; }
+.bform__opt { color: var(--muted); font-weight: 400; }
+.bform__input {
+  font-family: inherit;
+  /* Ровно 16px: на iOS поле мельче 16px заставляет Safari зумить страницу
+     при фокусе, и человек оказывается на увеличенном сайте посреди заявки. */
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--surface);
+  /* --border здесь не годится: 1.29 на белом, рамка поля не видна
+     (WCAG 1.4.11 требует 3.0). --control-line даёт 3.62. */
+  border: 2px solid var(--control-line);
+  border-radius: var(--r-md);
+  padding: var(--s3) var(--s4);
+  min-height: 48px;
+  width: 100%;
+}
+.bform__input::placeholder { color: var(--muted); }
+.bform__area { min-height: 72px; resize: vertical; padding-block: var(--s3); }
+/* appearance: none здесь был бы вреден: без родной стрелки поле выбора
+   ничем не отличается от текстового, и человек не понимает, что тут
+   список. Нарисовать свою стрелку фоном нельзя — цвет в data-URI это
+   хардкод мимо токенов. */
+.bform__select { padding-inline-end: var(--s6); }
+.bform__submit { margin-top: var(--s2); }
+.bform__fine { font-size: var(--t-small); color: var(--muted); }
+.bform__tel { color: var(--primary); font-weight: 600; }
+
+.bform__err { font-size: var(--t-small); color: var(--danger); font-weight: 500; }
+.bform__row--bad .bform__input { border-color: var(--danger); }
+
+.booking__done { display: grid; gap: var(--s3); justify-items: start; }
+.booking__done-title {
+  font-family: var(--font-display);
+  font-size: var(--t-h3);
+  font-weight: 700;
+}
+.booking__done-text { color: var(--muted); max-width: 40ch; }
+
+.booking__alt { margin-top: var(--s8); border-top: 1px solid var(--border); padding-top: var(--s6); }
+.booking__alt-label {
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: var(--s3);
+}
+.booking__alt-row { display: flex; flex-wrap: wrap; gap: var(--s2); }
+/* btn--onpanel рассчитана на тёмную подложку; здесь карточка белая,
+   поэтому кнопка-ссылка перекрашивается под синюю обводку. */
+.booking__alt-btn {
+  background: transparent;
+  color: var(--primary);
+  box-shadow: inset 0 0 0 2px var(--primary);
+  flex: 1 1 auto;
+}
+@media (hover: hover) and (pointer: fine) {
+  .booking__alt-btn:hover { background: var(--surface); }
+}
+
+@media (max-width: 560px) {
+  .booking { padding: var(--s6); }
+  .bform { grid-template-columns: 1fr; }
+}
+
+/* ============ КАРТА ============ */
+/* Тайлы OpenStreetMap, перекрашенные под палитру, пин по координатам.
+   Файл лежит локально: карта не тянет ни скриптов, ни трекеров и не
+   портит производительность на 4G. Атрибуция обязательна по ODbL. */
+.mapcard {
+  grid-column: 1 / -1;
+  padding: 0;
+  overflow: hidden;
+  margin: 0;
+}
+.mapcard__link { display: block; position: relative; text-decoration: none; }
+/* Полоса, а не полотно: при родных пропорциях 1280×860 карта в правой
+   колонке вырастала выше формы и перевешивала секцию. Пин по центру
+   кадра, поэтому object-fit: cover обрезает края, а не ориентир. */
+.mapcard__img {
+  display: block;
+  width: 100%;
+  height: clamp(200px, 26vw, 320px);
+  object-fit: cover;
+}
+.mapcard__cta {
+  position: absolute;
+  inset-block-end: var(--s4);
+  inset-inline-start: var(--s4);
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: var(--t-small);
+  font-weight: 600;
+  padding: var(--s2) var(--s4);
+  border-radius: var(--r-pill);
+}
+@media (hover: hover) and (pointer: fine) {
+  .mapcard__cta { transition: transform var(--dur-fast) var(--ease-out); }
+  .mapcard__link:hover .mapcard__cta { transform: translateY(-2px); }
+}
+.mapcard__caption {
+  padding: var(--s2) var(--s4);
+  font-size: var(--t-micro);
+  color: var(--panel-muted);
+}
+.mapcard__caption a { color: var(--panel-muted); }
 
 /* ============ 10 · ФУТЕР ============ */
 .footer { padding-block: var(--s24) calc(var(--s24) + var(--s16)); }
@@ -978,6 +1180,17 @@ a { color: inherit; }
   .stickybar { display: flex; }
   .footer { padding-bottom: calc(var(--s32) + var(--s8)); }
 }
+/* Пока hero на экране, полоса не нужна: в hero уже есть и «Записаться»,
+   и телефон, а полоса добавляла к ним третью и четвёртую кнопку и резала
+   вырез животного пополам. Класс вешает main.js по IntersectionObserver;
+   без JS полоса видна всегда — это безопасный вариант по умолчанию. */
+.stickybar--off {
+  transform: translateY(115%);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .stickybar { transition: transform var(--dur-base) var(--ease-out); }
+}
 
 /* ============ ОЦЕНКА СРОЧНОСТИ ============ */
 /* Работает без JS: состояние держит radio, показ результата — :checked в CSS. */
@@ -997,6 +1210,14 @@ a { color: inherit; }
   font-size: var(--t-h3);
   font-weight: 700;
   line-height: 1.2;
+  margin-bottom: var(--s2);
+}
+/* Инструкция к списку. Стоит над пилюлями — там, где её ещё можно
+   выполнить, а не под ними, где она уже неактуальна. */
+.triage__hint {
+  flex: 1 0 100%;
+  color: var(--panel-muted);
+  font-size: var(--t-small);
   margin-bottom: var(--s4);
 }
 .triage__radio {
@@ -1149,7 +1370,11 @@ a { color: inherit; }
   padding: var(--s6);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* Название сверху, а не по краям: вторым полюсом у space-between был
+     номер, и он раздувался до 52px. Низ карточки отдан животному —
+     прижатая к низу подпись налезала бы на лапы (на «Дерматологии»
+     корги накрывал хвост слова). */
+  justify-content: flex-start;
   min-width: 0;
 }
 .card.tall { grid-row: span 2; }
@@ -1171,18 +1396,25 @@ a { color: inherit; }
 }
 .card.wide .card__label { max-width: 16ch; }
 
+/* Тот же разбор, что и в плитках: 52-пиксельный серый номер был самым
+   крупным элементом карточки, а название направления — вдвое мельче.
+   Номер уходит маркером в угол. */
 .card__num {
-  position: relative;
+  position: absolute;
+  top: var(--s4);
+  inset-inline-end: var(--s6);
   z-index: 2;
   font-family: var(--font-display);
-  font-size: clamp(32px, 3.4vw, 52px);
+  font-size: var(--t-micro);
   font-weight: 700;
   line-height: 1;
+  letter-spacing: 0.08em;
   font-variant-numeric: tabular-nums;
-  opacity: 0.5;
+  opacity: 0.7;
 }
-/* Синяя карточка светлее остальных: 0.5 даёт там 2.3, нужно больше. */
-.card--primary .card__num { opacity: 0.65; }
+/* Белый на синем при 0.7 даёт 3.40 — ниже порога 4.5 для мелкого кегля.
+   На синих карточках номер идёт в полную силу (5.43). */
+.card--primary .card__num { opacity: 1; }
 
 /* Животное вырезано по контуру и упирается в нижний край карточки. */
 .card__pet {
@@ -1221,7 +1453,11 @@ a { color: inherit; }
   .card.tall { grid-row: span 2; }
 }
 @media (max-width: 560px) {
-  .fields__grid { grid-template-columns: 1fr; grid-auto-rows: 180px; }
+  /* Было `grid-auto-rows: 180px` — жёсткая высота ряда. Карточка
+     «Ещё принимают» с четырьмя чипами в неё не влезала, а `overflow:
+     hidden` на .card молча срезал «Анестезиологию» по нижнему краю.
+     minmax позволяет ряду вырасти под содержимое. */
+  .fields__grid { grid-template-columns: 1fr; grid-auto-rows: minmax(180px, auto); }
   .card.wide, .card.tall { grid-column: auto; grid-row: auto; }
   .card__pet { height: 88%; }
   .card__label { max-width: 60%; }

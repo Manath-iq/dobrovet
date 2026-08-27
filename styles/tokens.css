@@ -25,6 +25,10 @@
      под свою поверхность. Лайм-кольцо на лайме и на светлом — невидимо. */
   --focus:        var(--primary);
 
+  /* Ошибка формы. Живёт ТОЛЬКО на светлой карточке записи (paper 6.01,
+     surface 5.45). На тёмной панели даёт 2.88 — туда не ставить. */
+  --danger:       #C4123B;
+
   --accent:       #C8F135;  /* лайм: ТОЛЬКО заливка, никогда не текст на светлом */
   --on-accent:    #131A2E;
 
@@ -40,6 +44,10 @@
      Полупрозрачные плашки на panel (color-mix с on-panel):
      on-panel/panel+10% 12.94 · panel-muted/panel+7% 6.68 · primary-lift/panel+7% 4.88
      Кнопка на панели: ink/primary-lift 5.92
+     danger/paper 6.01 · danger/surface 5.45
+     Маркеры-номера в плитках и карточках (opacity 0.7 к своей подложке):
+     ink/paper 6.41 · ink/accent 5.73 · on-panel/panel 8.94
+     (on-primary/primary при 0.7 даёт 3.40 — на синем номер идёт в полную силу, 5.43)
      UI-safe (≥3.0): primary/border 4.21 · primary/accent 4.16 · ink/primary 3.18
                      control-line/paper 3.62 · control-line/surface 3.28
      Фокус-кольцо: primary/surface 4.93 · primary/paper 5.43 ·
