@@ -90,7 +90,7 @@
      встаёт поверх букв (единственный слом сетки) → лид и телефоны.
      Позиции на таймлайне проставлены абсолютно, а не через '-=': так видно,
      что кнопка звонка появляется примерно на 1.0s, а не «когда-то в конце». */
-  function heroEntrance(gsap, wide) {
+  function heroEntrance(gsap) {
     var eyebrow = document.querySelector('.hero__eyebrow');
     var lines   = gsap.utils.toArray('[data-hero-line]');
     var cutout  = document.querySelector('[data-hero-cutout]');
@@ -106,7 +106,7 @@
     // Вырез приходит СНИЗУ и чуть подрастает, центр трансформации — в лапах:
     // так он встаёт на землю, а не проявляется из воздуха. scale стартует
     // с 0.97, не с нуля — из ничего в природе ничего не появляется.
-    if (wide && cutout) {
+    if (cutout) {
       gsap.set(cutout, { yPercent: 8, scale: 0.97, transformOrigin: '50% 100%' });
       tl.to(cutout, { opacity: 1, yPercent: 0, scale: 1, duration: 0.75, ease: 'power3.out' }, 0.45);
     }
@@ -119,7 +119,10 @@
   /* Глубина слома сетки: вырез отстаёт от страницы при прокрутке.
      Едет ВНУТРЕННЯЯ картинка, а не <figure> — у фигуры свой твин входа,
      и два твина на одном свойстве одного элемента дрались бы.
-     Только на широком экране: на узком вырез стоит в потоке, слома нет. */
+     Ширину спрашивает только этот блок и только через gsap.matchMedia:
+     она пересчитывается при ресайзе и повороте, а разовое
+     matchMedia().matches на загрузке рассыпалось бы при первом же повороте
+     телефона. На узком экране слома сетки нет — нет и параллакса. */
   function heroDepth(gsap) {
     var img = document.querySelector('[data-hero-cutout] img');
     if (!img || !window.ScrollTrigger) return;
@@ -138,15 +141,13 @@
     });
   }
 
-  /* Появление секций. ScrollTrigger.batch вместо тридцати отдельных
-     триггеров: соседи, пересёкшие край в один момент, всплывают одной
-     волной со сдвигом 60ms, а не вразнобой каждый сам по себе.
+  /* Появление секций. ScrollTrigger.batch не уменьшает число триггеров —
+     он группирует ВЫЗОВЫ: соседи, пересёкшие край в один момент, всплывают
+     одной волной со сдвигом 60ms, а не вразнобой каждый сам по себе.
      batchMax держит волну короткой — иначе плитка из девяти карточек
      разъезжается на полторы секунды. */
-  function sectionReveals(gsap, wide) {
-    var cutout = document.querySelector('[data-hero-cutout]');
+  function sectionReveals(gsap) {
     var items = gsap.utils.toArray('[data-reveal]').filter(function (el) {
-      if (el === cutout) return !wide;   // на узком экране вырез — обычная секция ниже сгиба
       return !el.closest('.hero');
     });
     if (!items.length) return;
@@ -177,12 +178,11 @@
 
     var gsap = window.gsap;
     var tl = null;
-    var wide = window.matchMedia(WIDE).matches;
 
     try {
       if (window.ScrollTrigger) gsap.registerPlugin(window.ScrollTrigger);
-      tl = heroEntrance(gsap, wide);
-      sectionReveals(gsap, wide);
+      tl = heroEntrance(gsap);
+      sectionReveals(gsap);
       heroDepth(gsap);
     } catch (e) {
       showEverything();
