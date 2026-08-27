@@ -11,7 +11,8 @@ html { scroll-behavior: smooth; }
 /* Плавающая навигация перекрывает верх секции при переходе по якорю.
    Высота пилюли ~64px + воздух. */
 :target,
-[id] { scroll-margin-top: var(--s24); }
+section[id],
+main[id] { scroll-margin-top: var(--s24); }
 
 body {
   margin: 0;
@@ -29,14 +30,25 @@ ul, ol { padding: 0; list-style: none; }
 img { max-width: 100%; display: block; }
 a { color: inherit; }
 
+/* Фокус-кольцо берёт цвет у ближайшей поверхности, а не у секции.
+   Раньше вся .emergency / .contacts / .footer получала лаймовое кольцо —
+   и на лаймовой карточке телефонов оно давало контраст 1.00, в футере
+   на светлом фоне 1.19, на белой карточке триажа 1.31. Кольца просто
+   не было видно там, где оно нужнее всего: на кнопке экстренного звонка
+   и на номерах телефонов. */
 :focus-visible {
-  outline: 3px solid var(--primary);
+  outline: 3px solid var(--focus);
   outline-offset: 3px;
   border-radius: var(--s1);
 }
-.emergency :focus-visible,
-.contacts :focus-visible,
-.footer :focus-visible { outline-color: var(--accent); }
+/* тёмные панели — лайм читается (13.24) */
+.emergency,
+.contacts { --focus: var(--accent); }
+/* светлые и лаймовые плашки внутри них — кольцо чернильное (13.24 / 17.29) */
+.contacts__block:first-child,
+.triage__result--now,
+.triage__result--today { --focus: var(--ink); }
+/* футер светлый — работает синее кольцо по умолчанию (4.93 на surface) */
 
 .visually-hidden {
   position: absolute; width: 1px; height: 1px;
@@ -83,8 +95,11 @@ a { color: inherit; }
 .btn--primary { background: var(--primary); color: var(--on-primary); }
 .btn--accent  { background: var(--accent);  color: var(--on-accent); }
 .btn--onblue  { background: var(--paper);   color: var(--ink); }
-.btn--onpanel { background: var(--primary-lift); color: var(--on-accent); }
-.btn--ghost   { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 2px var(--border); }
+/* Текст на светло-синей кнопке — это --ink в своей роли «тёмный текст»,
+   а не --on-accent: тот описывает текст поверх лайма и здесь просто
+   совпадал по значению. Токен вне своей роли ломается при первой же правке. */
+.btn--onpanel { background: var(--primary-lift); color: var(--ink); }
+.btn--ghost   { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 2px var(--control-line); }
 
 @media (hover: hover) {
   .btn:hover { transform: translateY(-2px); }
@@ -164,6 +179,18 @@ a { color: inherit; }
   .nav__cta-full { display: none; }
   .nav__cta-short { display: inline; }
 }
+/* На 320px вордмарк (nowrap, ~144px) + «Позвонить» (126px) не влезали
+   в пилюлю шириной 288px: кнопка вылезала за её край и обрезалась
+   вьюпортом на 6px. Ниже 400px оставляем знак, а слово прячем в
+   доступное имя ссылки — так пилюля держится при любом фолбэке шрифта. */
+@media (max-width: 400px) {
+  .nav { padding-inline-start: var(--s3); gap: var(--s3); }
+  .nav__mark-text {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+}
 
 /* ============ 1 · HERO · афиша ============ */
 .hero {
@@ -213,12 +240,18 @@ a { color: inherit; }
 .hero__cutout {
   position: absolute;
   z-index: 3;
-  right: calc(-1 * var(--s12));
-  top: 18%;
-  /* Ширина подобрана замером: при min(50%, 620px) непрозрачная часть кадра
-     заходит примерно на 70px на хвост строки «Считаем» — наезд читается,
-     а слово остаётся целым. Меньше — животные просто стоят рядом, и приём пропадает. */
-  width: min(50%, 620px);
+  /* Геометрия подобрана замером АЛЬФА-КАНАЛА кадра, а не рамки <figure>:
+     в полосе строки «Считаем» силуэт начинается только на 24% ширины
+     кадра, поэтому прежние `right: -48px; top: 18%; width: min(50%,620px)`
+     давали не наезд, а зазор в 94px — животные просто стояли рядом,
+     и подписной приём не срабатывал.
+     Текущие значения (замер на 1280): наезд +37px на хвост «Считаем»,
+     запас до низа секции 66px, до строки лида 186px.
+     Правый вылет убран: при вылете кадр приходилось расширять до 800px,
+     и тогда лапы обрезал скруглённый низ секции. */
+  right: 0;
+  top: 5%;
+  width: min(57%, 720px);
   aspect-ratio: 1120 / 1223;
   margin: 0;
   pointer-events: none;
@@ -295,7 +328,7 @@ a { color: inherit; }
   font-variant-numeric: tabular-nums;
 }
 .section-num--panel { color: var(--accent); }
-.section-num--onblue { color: var(--on-primary); opacity: 0.6; }
+.section-num--onblue { color: var(--on-primary); opacity: 0.75; }
 
 /* ============ 2 · ПРОБЛЕМА ============ */
 .problem { padding-block: var(--s32); }
@@ -370,6 +403,7 @@ a { color: inherit; }
   align-items: start;
 }
 .emergency__title {
+  text-wrap: balance;
   font-family: var(--font-display);
   font-size: var(--t-h2);
   font-weight: 700;
@@ -432,6 +466,7 @@ a { color: inherit; }
   padding-block: var(--s32);
 }
 .rooms__title {
+  text-wrap: balance;
   font-family: var(--font-display);
   font-size: var(--t-h2);
   font-weight: 700;
@@ -476,7 +511,9 @@ a { color: inherit; }
   font-weight: 700;
   line-height: 1;
   font-variant-numeric: tabular-nums;
-  opacity: 0.3;
+  /* Было 0.3 — 1.90 на лайме и 1.94 на белом при пороге 3.0 для крупного
+     кегля. Номер перестаёт читаться и выглядит как сбой отрисовки. */
+  opacity: 0.5;
 }
 .tile__name { font-size: var(--t-h3); font-weight: 600; line-height: 1.2; }
 .tile__note {
@@ -500,6 +537,7 @@ a { color: inherit; }
 /* ============ 5 · КАК ПРОХОДИТ ВИЗИТ ============ */
 .visit { padding-block: var(--s32); }
 .visit__title {
+  text-wrap: balance;
   font-family: var(--font-display);
   font-size: var(--t-h2);
   font-weight: 700;
@@ -533,7 +571,9 @@ a { color: inherit; }
   line-height: 1;
   color: var(--primary);
   font-variant-numeric: tabular-nums;
-  opacity: 0.32;
+  /* Номер шага — содержание, а не орнамент: он задаёт порядок чтения.
+     При 0.32 контраст к белому был 1.65 при требуемых 3.0. */
+  opacity: 0.7;
   flex: none;
 }
 .step__name { font-size: var(--t-h3); font-weight: 600; line-height: 1.2; }
@@ -546,28 +586,71 @@ a { color: inherit; }
 }
 
 /* ============ 6 · ЦЕНЫ ============ */
+/* Спек-лист F6. Секция отвечает не на «сколько» (ответа пока нет),
+   а на «за что» — состав услуги теперь основное содержание строки,
+   а не серая приписка под гигантским прочерком. */
 .prices { padding-block: var(--s24); }
+/* Заголовок слева, ответ про цену справа — та же раскладка, что
+   у .emergency__grid и .prep__grid. Раньше правая половина секции
+   пустовала: лид упирался в 50ch, а таблица шла на всю ширину. */
+.prices__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  column-gap: var(--s16);
+  row-gap: var(--s8);
+  align-items: start;
+}
+.prices__intro { grid-column: 1; grid-row: 1; }
+.pricelist     { grid-column: 1; grid-row: 2; }
+/* Карточка стоит второй в разметке (мобильный порядок чтения),
+   а на десктопе занимает вторую колонку на обе строки. */
+.answer        { grid-column: 2; grid-row: 1 / span 2; }
 .prices__title {
+  text-wrap: balance;
   font-family: var(--font-display);
   font-size: var(--t-h2);
   font-weight: 700;
   letter-spacing: -0.02em;
 }
-.prices__lead { margin-top: var(--s6); max-width: 50ch; color: var(--muted); }
-.prices__warning {
-  margin-top: var(--s6);
-  padding: var(--s4) var(--s6);
-  background: var(--accent);
-  color: var(--on-accent);
-  border-radius: var(--r-md);
-  max-width: 62ch;
-  font-size: var(--t-small);
-  font-weight: 500;
+.prices__lead { margin-top: var(--s6); max-width: 46ch; color: var(--muted); }
+
+/* --- карточка «сколько это стоит» --- */
+/* Один ответ вместо десяти прочерков в колонке. Формат повторяет
+   карточку «Часы работы» в контактах: «—», состояние, что делать. */
+.answer {
+  background: var(--paper);
+  border-radius: var(--r-lg);
+  padding: var(--s8);
+  position: sticky;
+  top: var(--s24);          /* ниже плавающей пилюли навигации */
 }
+.answer__label {
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.answer__dash {
+  font-family: var(--font-display);
+  font-size: var(--t-h3);
+  font-weight: 700;
+  line-height: 1;
+  margin-block: var(--s3) var(--s2);
+}
+.answer__state { font-weight: 600; }
+.answer__text {
+  margin-top: var(--s4);
+  font-size: var(--t-small);
+  color: var(--muted);
+}
+.answer__btn { margin-top: var(--s6); width: 100%; }
+
+/* --- список услуг --- */
 .pricelist {
   width: 100%;
-  margin-top: var(--s12);
   border-collapse: collapse;
+  table-layout: fixed;
   text-align: start;
 }
 .pricelist thead th {
@@ -580,50 +663,66 @@ a { color: inherit; }
   padding-bottom: var(--s3);
   border-bottom: 2px solid var(--border);
 }
+.pricelist thead th:first-child { width: 36%; }
 .pricelist tbody th,
 .pricelist tbody td {
-  padding-block: var(--s6);
+  padding-block: var(--s4);
   border-bottom: 1px solid var(--border);
   text-align: start;
   vertical-align: baseline;
 }
-.pricelist tbody th { font-weight: 600; padding-inline-end: var(--s6); }
-.pricelist tbody td { color: var(--muted); font-size: var(--t-small); }
-.pricelist__feature th,
-.pricelist__feature td { background: var(--paper); }
-.pricelist__feature th { padding-inline-start: var(--s4); border-radius: var(--r-md) 0 0 var(--r-md); }
-/* Скругляем и правый край выделенной строки — иначе она обрывается прямым углом. */
-.pricelist__feature td:last-child { padding-inline-end: var(--s4); border-radius: 0 var(--r-md) var(--r-md) 0; }
-.price {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: var(--t-h3);
-  color: var(--ink) !important;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  text-align: end !important;
-}
-.price__note {
-  display: block;
-  font-family: var(--font-body);
-  font-size: var(--t-micro);
-  font-weight: 400;
-  color: var(--muted);
-}
+/* Название услуги и её состав идут одним кеглем: состав — это
+   единственное, что про услугу сейчас известно наверняка. */
+.pricelist tbody th { font-weight: 600; padding-inline-end: var(--s8); }
+.pricelist tbody td { color: var(--muted); }
 
+/* Заголовок группы. Десять строк подряд читались как один поток —
+   четыре группы дают глазу, за что зацепиться. */
+.pricelist .pricegroup__head th {
+  padding-block: var(--s12) var(--s4);
+  font-size: var(--t-small);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border-bottom: 0;
+}
+/* Шапка таблицы и первый заголовок группы — оба капсом; без воздуха
+   между ними они читаются как одна пара, а не как два уровня. */
+.pricelist .pricegroup:first-of-type .pricegroup__head th { padding-top: var(--s12); }
+/* Единственный акцент в списке — пакеты «под ключ», ради которых
+   секция и существует. Раньше выделялась одна строка белой подложкой,
+   и в ней всё равно стоял прочерк. */
+.pricelist .pricegroup--key .pricegroup__head th { color: var(--primary); }
+
+@media (max-width: 900px) {
+  .prices__grid { grid-template-columns: 1fr; }
+  .prices__intro, .answer, .pricelist { grid-column: 1; grid-row: auto; }
+  /* На узком экране липкая карточка съедала бы треть экрана — отключаем. */
+  .answer { position: static; }
+  .answer__btn { width: auto; }
+}
 @media (max-width: 720px) {
   .prices { padding-block: var(--s16); }
+  .pricelist { table-layout: auto; }
   .pricelist thead { display: none; }
-  .pricelist tbody tr { display: grid; gap: var(--s1); padding-block: var(--s4); border-bottom: 1px solid var(--border); }
-  .pricelist tbody th, .pricelist tbody td { border: 0; padding-block: 0; }
-  .price, .price__note { text-align: start !important; }
-  .pricelist__feature th { border-radius: var(--r-md) var(--r-md) 0 0; padding-inline: var(--s4); }
-  .pricelist__feature td { padding-inline: var(--s4); }
+  .pricelist tbody tr {
+    display: grid;
+    gap: var(--s1);
+    padding-block: var(--s4);
+    border-bottom: 1px solid var(--border);
+  }
+  .pricelist tbody th,
+  .pricelist tbody td { border: 0; padding-block: 0; padding-inline-end: 0; }
+  /* Заголовок группы остаётся отдельной строкой с рамкой снизу. */
+  .pricelist .pricegroup__head th { padding-block: var(--s8) var(--s2); border: 0; }
+  .pricelist .pricegroup:first-of-type .pricegroup__head th { padding-top: var(--s4); }
 }
 
 /* ============ 7 · ВРАЧИ ============ */
 .doctors { padding-block: var(--s24); }
 .doctors__title {
+  text-wrap: balance;
   font-family: var(--font-display);
   font-size: var(--t-h2);
   font-weight: 700;
@@ -696,9 +795,12 @@ a { color: inherit; }
   align-items: start;
 }
 .quote__text {
-  font-family: var(--font-display);
+  /* Unbounded здесь стоял на пяти строках — style-lock держит дисплейный
+     шрифт только на коротких строках (H1, вордмарк, номера). Отзыв — это
+     абзац, он набирается Onest, как и .problem__statement того же кегля. */
+  font-family: var(--font-body);
   font-size: clamp(22px, 3.6vw, 46px);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.22;
   letter-spacing: -0.02em;
   margin: 0;
@@ -738,6 +840,7 @@ a { color: inherit; }
   padding-block: var(--s32);
 }
 .contacts__title {
+  text-wrap: balance;
   font-family: var(--font-display);
   font-size: var(--t-h2);
   font-weight: 700;
@@ -794,9 +897,9 @@ a { color: inherit; }
   margin-inline-end: var(--s4);
 }
 @media (hover: hover) { .contacts__link:hover { text-decoration: underline; } }
-.hours { border-collapse: collapse; font-variant-numeric: tabular-nums; }
-.hours th, .hours td { padding-block: var(--s1); text-align: start; font-weight: 400; }
-.hours th { padding-inline-end: var(--s6); color: var(--panel-muted); }
+/* Прочерк вместо часов: тот же кегль, что у телефонов, но это не ссылка —
+   цель нажатия ему не нужна. */
+.contacts__big--plain { min-height: 0; margin-bottom: var(--s1); }
 
 @media (max-width: 980px) { .contacts__grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) {
@@ -882,14 +985,20 @@ a { color: inherit; }
   background: var(--accent);
   color: var(--on-accent);
   font-weight: 600;
+  /* выбранная пилюля лаймовая — лаймовое кольцо на ней было бы невидимо */
+  --focus: var(--ink);
 }
 /* Фокус-кольцо на пилюле: сам radio невидим, поэтому рисуем на метке. */
 .triage__radio:focus-visible + .triage__option {
-  outline: 3px solid var(--accent);
+  outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
 
-.triage__results { flex: 1 0 100%; margin-top: var(--s6); min-height: 190px; }
+/* min-height: 190px здесь резервировал место под будущий результат, но до
+   выбора это была просто дыра в 190px посреди тёмной панели. Сдвиг после
+   клика инициирован самим человеком и происходит ниже пилюль — ничего
+   из прочитанного не прыгает. */
+.triage__results { flex: 1 0 100%; margin-top: var(--s6); }
 .triage__result { display: none; border-radius: var(--r-lg); padding: var(--s8); }
 .triage__result--now   { background: var(--accent); color: var(--on-accent); }
 .triage__result--today { background: var(--paper);  color: var(--ink); }
@@ -929,7 +1038,6 @@ a { color: inherit; }
 
 @media (max-width: 640px) {
   .triage { margin-top: var(--s8); padding-top: var(--s8); }
-  .triage__results { min-height: 0; }
   .triage__result { padding: var(--s6); }
 }
 
@@ -937,6 +1045,7 @@ a { color: inherit; }
 /* Связочная секция — намеренно легче основных, иначе ритм страницы плоский. */
 .fields { padding-block: var(--s16); }
 .fields__title {
+  text-wrap: balance;
   font-family: var(--font-display);
   font-size: var(--t-h2);
   font-weight: 700;
@@ -990,8 +1099,10 @@ a { color: inherit; }
   font-weight: 700;
   line-height: 1;
   font-variant-numeric: tabular-nums;
-  opacity: 0.3;
+  opacity: 0.5;
 }
+/* Синяя карточка светлее остальных: 0.5 даёт там 2.3, нужно больше. */
+.card--primary .card__num { opacity: 0.65; }
 
 /* Животное вырезано по контуру и упирается в нижний край карточки. */
 .card__pet {
@@ -1046,6 +1157,7 @@ a { color: inherit; }
   align-items: start;
 }
 .prep__title {
+  text-wrap: balance;
   font-family: var(--font-display);
   font-size: var(--t-h2);
   font-weight: 700;
@@ -1079,7 +1191,7 @@ a { color: inherit; }
   flex: none;
   width: 22px; height: 22px;
   border-radius: 6px;
-  box-shadow: inset 0 0 0 2px var(--border);
+  box-shadow: inset 0 0 0 2px var(--control-line);
   background: var(--paper);
 }
 @media (hover: hover) { .checklist__label:hover { transform: translateX(2px); } }
@@ -1094,7 +1206,7 @@ a { color: inherit; }
   text-decoration-color: var(--border);
 }
 .checklist__box:focus-visible + .checklist__label {
-  outline: 3px solid var(--primary);
+  outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
 
@@ -1106,6 +1218,7 @@ a { color: inherit; }
 /* ============ ВОПРОСЫ ============ */
 .faq { padding-block: var(--s24); }
 .faq__title {
+  text-wrap: balance;
   font-family: var(--font-display);
   font-size: var(--t-h2);
   font-weight: 700;
@@ -1141,7 +1254,7 @@ a { color: inherit; }
   transition: transform var(--dur-base) var(--ease-out);
 }
 .faq__item[open] .faq__q::after { transform: rotate(225deg) translate(-3px, -3px); }
-.faq__q:focus-visible { outline: 3px solid var(--primary); outline-offset: -3px; }
+.faq__q:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
 .faq__a {
   padding: 0 var(--s6) var(--s6);
   color: var(--muted);

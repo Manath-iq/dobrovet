@@ -184,6 +184,32 @@
     }
   }
 
+  /* ---------- оценка срочности: объявление вердикта ---------- */
+  /* Показ результата целиком на CSS (`:checked ~ .triage__results`), и это
+     смена display, а не изменение DOM — live-регион на самом контейнере
+     мог промолчать. Здесь мы кладём текст вердикта в отдельный скрытый
+     status-регион: это настоящая мутация DOM, её скринридер объявит.
+     Без JS виджет по-прежнему работает — просто без объявления. */
+  function initTriage() {
+    var out = document.querySelector('.triage__announce');
+    var radios = [].slice.call(document.querySelectorAll('.triage__radio'));
+    if (!out || !radios.length) return;
+
+    var kind = function (r) {
+      if (r.classList.contains('triage__radio--now')) return 'now';
+      if (r.classList.contains('triage__radio--today')) return 'today';
+      return 'plan';
+    };
+
+    radios.forEach(function (r) {
+      r.addEventListener('change', function () {
+        if (!r.checked) return;
+        var box = document.querySelector('.triage__result--' + kind(r));
+        out.textContent = box ? (box.getAttribute('data-verdict') || '') : '';
+      });
+    });
+  }
+
   /* ---------- нав: прячем при скролле вниз ---------- */
   function initNav() {
     var nav = document.getElementById('nav');
@@ -206,6 +232,7 @@
     initMotion();
     initNav();
     initChecklist();
+    initTriage();
   }
 
   if (document.readyState === 'loading') {

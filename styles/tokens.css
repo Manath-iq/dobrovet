@@ -12,7 +12,18 @@
 
   --primary:      #015BF9;  /* синий: и кнопка, и заливка целых секций */
   --on-primary:   #FFFFFF;
-  --primary-lift: #4D8BFF;  /* синий для тёмной панели — обычный там нечитаем */
+  /* Синий для тёмной панели. #4D8BFF давал 4.38 на полупрозрачной плашке
+     .contacts__block (белый 7% поверх panel) — ниже порога 4.5. Осветлён. */
+  --primary-lift: #5C95FF;
+
+  /* Граница интерактивного контрола. --border (#DDE3EC) для этой роли
+     не годится: 1.29 на белом и 1.17 на surface — рамка чекбокса и
+     ghost-кнопки просто не видны (WCAG 1.4.11 требует 3.0). */
+  --control-line: #7E8798;
+
+  /* Цвет фокус-кольца. Наследуется: секция или карточка переопределяет его
+     под свою поверхность. Лайм-кольцо на лайме и на светлом — невидимо. */
+  --focus:        var(--primary);
 
   --accent:       #C8F135;  /* лайм: ТОЛЬКО заливка, никогда не текст на светлом */
   --on-accent:    #131A2E;
@@ -21,15 +32,23 @@
   --on-panel:     #FFFFFF;
   --panel-muted:  #A8B2C6;  /* вторичный текст на панели, 8.11:1 */
 
-  /* Легальные пары (check_contrast.py):
+  /* Легальные пары (пересчитано 2026-08-27, см. .tastemaker/style-lock.md):
      ink/paper 17.29 · ink/surface 15.70 · ink/accent 13.24 · muted/paper 5.95
      primary/paper 5.43 · on-primary/primary 5.43 · primary/surface 4.93
-     on-panel/panel 17.29 · accent/panel 13.24 · primary-lift/panel 6.90
+     on-panel/panel 17.29 · accent/panel 13.24 · primary-lift/panel 5.92
      panel-muted/panel 8.11 · muted/surface 5.40
-     UI-safe: primary/border 4.21 · primary/accent 4.16 · ink/primary 3.18
+     Полупрозрачные плашки на panel (color-mix с on-panel):
+     on-panel/panel+10% 12.94 · panel-muted/panel+7% 6.68 · primary-lift/panel+7% 4.88
+     Кнопка на панели: ink/primary-lift 5.92
+     UI-safe (≥3.0): primary/border 4.21 · primary/accent 4.16 · ink/primary 3.18
+                     control-line/paper 3.62 · control-line/surface 3.28
+     Фокус-кольцо: primary/surface 4.93 · primary/paper 5.43 ·
+                   accent/panel 13.24 · ink/accent 13.24 · ink/paper 17.29
      ЗАПРЕЩЕНО: accent текстом на paper (1.31) и на surface (1.19);
+                accent фокус-кольцом на accent (1.00), на paper (1.31), на surface (1.19);
                 primary на panel (3.18 — только крупный кегль) — брать primary-lift;
-                ink мелким текстом на primary (3.18) — только крупный кегль. */
+                ink мелким текстом на primary (3.18) — только крупный кегль;
+                border как граница контрола (1.29 / 1.17) — брать control-line. */
 
   /* --- шкала отступов --- */
   --s1: 4px;   --s2: 8px;   --s3: 12px;  --s4: 16px;

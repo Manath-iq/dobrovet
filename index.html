@@ -21,6 +21,12 @@
 <meta name="theme-color" content="#015BF9">
 <link rel="stylesheet" href="styles/tokens.css">
 <link rel="stylesheet" href="styles/main.css">
+<!-- LCP-кадр hero: без preload браузер находит его только после разбора CSS. -->
+<link rel="preload" as="image" href="assets/photos/hero-cutout.webp"
+      imagesrcset="assets/photos/hero-cutout-640.webp 640w,
+                   assets/photos/hero-cutout.webp 1120w"
+      imagesizes="(max-width: 900px) min(72vw, 320px), min(57vw, 720px)"
+      fetchpriority="high">
 <script>
   /* До первой отрисовки: включаем режим анимации только если посетитель
      не просил их отключить. main.js снимет класс, если GSAP не загрузится. */
@@ -62,7 +68,7 @@
   <a class="nav__mark" href="#glavnoe">
     <img class="nav__logo" src="assets/brand/logo.svg" width="28" height="28"
          alt="" aria-hidden="true">
-    ДоброВет
+    <span class="nav__mark-text">ДоброВет</span>
   </a>
   <nav class="nav__links" aria-label="Разделы страницы">
     <a href="#zdanie">Что у нас есть</a>
@@ -94,7 +100,15 @@
     <!-- ЕДИНСТВЕННЫЙ намеренный слом сетки: вырез животного ложится поверх букв.
          Плейсхолдер до генерации — см. CLAUDE.md, правило 6. -->
     <figure class="hero__cutout" data-hero-cutout>
-      <img src="assets/photos/hero-cutout.webp" width="1120" height="1223"
+      <!-- Это LCP-кадр: грузится сразу (без loading="lazy") и приоритетно.
+           На мобильном он показывается шириной 320px, поэтому там едет
+           вариант на 640px — 87 KB вместо 300 KB. Пропорции у обоих
+           файлов одинаковые, width/height держат место до загрузки. -->
+      <img src="assets/photos/hero-cutout.webp"
+           srcset="assets/photos/hero-cutout-640.webp 640w,
+                   assets/photos/hero-cutout.webp 1120w"
+           sizes="(max-width: 900px) min(72vw, 320px), min(57vw, 720px)"
+           width="1120" height="1223" fetchpriority="high" decoding="async"
            alt="Кот и собака сидят рядом и смотрят в камеру"
            data-placeholder="заменить реальным кадром из клиники">
     </figure>
@@ -172,8 +186,13 @@
   <!-- Оценка срочности. Работает без JS: radio + :checked в CSS. -->
   <div class="shell">
     <div class="triage" data-reveal>
-      <div class="triage__group" role="radiogroup" aria-labelledby="triage-legend">
-        <p class="triage__legend" id="triage-legend">Что происходит с питомцем?</p>
+      <!-- role="radiogroup" здесь убран намеренно: внутри группы лежали
+           заголовок и live-регион, а radiogroup по спецификации содержит
+           только радиокнопки — скринридер спотыкался о лишних детей.
+           Нативные <input type="radio"> с общим name и так образуют группу
+           и объявляются как «1 из 9». -->
+      <div class="triage__group">
+        <h3 class="triage__legend" id="triage-legend">Что происходит с питомцем?</h3>
           <input class="triage__radio triage__radio--now" type="radio"
                  name="triage" id="triage-1">
           <label class="triage__option" for="triage-1">не дышит, задыхается, синеет язык</label>
@@ -201,8 +220,12 @@
           <input class="triage__radio triage__radio--plan" type="radio"
                  name="triage" id="triage-9">
           <label class="triage__option" for="triage-9">прививка, чипирование, стерилизация, стрижка</label>
-        <div class="triage__results" role="status" aria-live="polite">
-          <div class="triage__result triage__result--now">
+        <!-- Показ результата делает CSS (`:checked ~`), а это чистая смена
+             display: DOM не меняется, и live-регион на этом контейнере
+             мог не сработать. Объявление вынесено в отдельный
+             .triage__announce, куда main.js кладёт текст вердикта. -->
+        <div class="triage__results">
+          <div class="triage__result triage__result--now" data-verdict="Не ждите, выезжайте. Позвоните с дороги.">
             <p class="triage__verdict">Не ждите. Выезжайте.</p>
             <p class="triage__advice">
               Позвоните с дороги — подготовимся к вашему приезду и скажем,
@@ -211,7 +234,7 @@
             <a class="btn btn--accent btn--lg" href="tel:+79872152277">Позвонить сейчас</a>
           </div>
 
-          <div class="triage__result triage__result--today">
+          <div class="triage__result triage__result--today" data-verdict="Позвоните сегодня. По телефону разберёмся, нужно ли ехать сейчас.">
             <p class="triage__verdict">Позвоните сегодня.</p>
             <p class="triage__advice">
               По телефону разберёмся, нужно ли ехать прямо сейчас
@@ -220,7 +243,7 @@
             <a class="btn btn--accent btn--lg" href="tel:+79872152277">+7 987 215-22-77</a>
           </div>
 
-          <div class="triage__result triage__result--plan">
+          <div class="triage__result triage__result--plan" data-verdict="Это плановый визит. Позвоните, чтобы выбрать время.">
             <p class="triage__verdict">Это плановый визит.</p>
             <p class="triage__advice">
               Позвоните, чтобы выбрать удобное время и уточнить,
@@ -231,6 +254,8 @@
 
           <p class="triage__idle">Выберите пункт — подскажем, насколько это срочно.</p>
         </div>
+
+        <p class="visually-hidden triage__announce" role="status" aria-live="polite"></p>
       </div>
 
       <p class="triage__disclaimer">
@@ -267,28 +292,28 @@
       </li>
       <li class="tile tile--paper" data-reveal>
         <span class="tile__name">Приёмная</span>
-        <span class="tile__num">01</span>
+        <span class="tile__num" aria-hidden="true">01</span>
       </li>
       <li class="tile tile--accent tile--tall" data-reveal>
         <span class="tile__name">УЗИ и рентген</span>
-        <span class="tile__num">02</span>
+        <span class="tile__num" aria-hidden="true">02</span>
       </li>
       <li class="tile tile--paper" data-reveal>
         <span class="tile__name">Лаборатория</span>
         <span class="tile__note">срок готовности уточняется</span>
-        <span class="tile__num">03</span>
+        <span class="tile__num" aria-hidden="true">03</span>
       </li>
       <li class="tile tile--panel" data-reveal>
         <span class="tile__name">Операционная</span>
-        <span class="tile__num">04</span>
+        <span class="tile__num" aria-hidden="true">04</span>
       </li>
       <li class="tile tile--paper" data-reveal>
         <span class="tile__name">Стационар</span>
-        <span class="tile__num">05</span>
+        <span class="tile__num" aria-hidden="true">05</span>
       </li>
       <li class="tile tile--accent tile--wide" data-reveal>
         <span class="tile__name">Ветаптека</span>
-        <span class="tile__num">06</span>
+        <span class="tile__num" aria-hidden="true">06</span>
       </li>
     </ul>
   </div>
@@ -309,36 +334,36 @@
         <img class="card__pet" src="assets/photos/pet-1.webp" width="520" height="842"
              alt="Рыжий кот" loading="lazy"
              data-placeholder="временное фото">
-        <span class="card__num">01</span>
+        <span class="card__num" aria-hidden="true">01</span>
       </li>
       <li class="card card--2 wide card--panel" data-reveal>
         <span class="card__label">Хирургия</span>
         <img class="card__pet" src="assets/photos/pet-4.webp" width="520" height="886"
              alt="Щенок лабрадора" loading="lazy"
              data-placeholder="временное фото">
-        <span class="card__num">02</span>
+        <span class="card__num" aria-hidden="true">02</span>
       </li>
       <li class="card card--3 tall card--primary" data-reveal>
         <span class="card__label">Дерматология</span>
         <img class="card__pet" src="assets/photos/pet-2.webp" width="520" height="842"
              alt="Собака породы вельш-корги" loading="lazy"
              data-placeholder="временное фото">
-        <span class="card__num">03</span>
+        <span class="card__num" aria-hidden="true">03</span>
       </li>
       <li class="card card--4 card--paper" data-reveal>
         <span class="card__label">Стоматология</span>
-        <span class="card__num">04</span>
+        <span class="card__num" aria-hidden="true">04</span>
       </li>
       <li class="card card--5 card--paper" data-reveal>
         <span class="card__label">Офтальмология</span>
-        <span class="card__num">05</span>
+        <span class="card__num" aria-hidden="true">05</span>
       </li>
       <li class="card card--6 wide card--primary" data-reveal>
         <span class="card__label">Кардиология</span>
         <img class="card__pet" src="assets/photos/pet-3.webp" width="520" height="842"
              alt="Британская короткошёрстная кошка" loading="lazy"
              data-placeholder="временное фото">
-        <span class="card__num">06</span>
+        <span class="card__num" aria-hidden="true">06</span>
       </li>
       <li class="card card--7 wide card--surface" data-reveal>
         <span class="card__label">Ещё направления</span>
@@ -367,7 +392,7 @@
                data-placeholder="заменить реальным кадром из клиники">
         </figure>
         <div class="step__head">
-          <p class="step__num">1</p>
+          <p class="step__num" aria-hidden="true">1</p>
           <h3 class="step__name">Звоните</h3>
         </div>
         <p class="step__text">Опишем, что делать прямо сейчас, и назовём время приёма</p>
@@ -379,7 +404,7 @@
                data-placeholder="заменить реальным кадром из клиники">
         </figure>
         <div class="step__head">
-          <p class="step__num">2</p>
+          <p class="step__num" aria-hidden="true">2</p>
           <h3 class="step__name">Осмотр</h3>
         </div>
         <p class="step__text">Врач осматривает питомца и объясняет, что видит</p>
@@ -391,7 +416,7 @@
                data-placeholder="заменить реальным кадром из клиники">
         </figure>
         <div class="step__head">
-          <p class="step__num">3</p>
+          <p class="step__num" aria-hidden="true">3</p>
           <h3 class="step__name">Диагностика в тот же визит</h3>
         </div>
         <p class="step__text">УЗИ, рентген и анализы — здесь же, ехать никуда не нужно</p>
@@ -403,7 +428,7 @@
                data-placeholder="заменить реальным кадром из клиники">
         </figure>
         <div class="step__head">
-          <p class="step__num">4</p>
+          <p class="step__num" aria-hidden="true">4</p>
           <h3 class="step__name">Назначение и контроль</h3>
         </div>
         <p class="step__text">Расписываем лечение и договариваемся о повторном визите</p>
@@ -457,81 +482,121 @@
 </section>
 
 <!-- ============ 6 · ЦЕНЫ · спек-лист ============ -->
+<!-- Колонки «Цена» здесь нет намеренно. Пока прайса нет, она была бы
+     десятью одинаковыми прочерками, набранными крупнее названий услуг, —
+     то есть самым громким в секции оказывалось бы «мы не знаем».
+     «—» и «уточняется» сказаны один раз, в карточке справа, тем же
+     приёмом, что и в карточке «Часы работы».
+     КАК ВЕРНУТЬ ЦЕНЫ, когда прайс придёт от клиники:
+       1. в <thead> добавить третий <th scope="col">Цена</th>;
+       2. в каждую строку — <td class="price">1 200 ₽</td> и в заголовок
+          группы поправить colspan с 2 на 3;
+       3. в .pricelist вернуть ширину третьей колонки и text-align: end;
+       4. карточку .answer заменить на короткую строку о том,
+          от чего цена зависит.
+     Группы и порядок строк менять не нужно — см. CONTENT.md, раздел 6. -->
 <section class="prices" id="tseny" aria-labelledby="prices-h2">
-  <div class="shell">
-    <p class="section-num" aria-hidden="true">07</p>
-    <h2 class="prices__title" id="prices-h2" data-reveal>Цены</h2>
-    <p class="prices__lead" data-reveal>
-      В пакетные цены уже входят наркоз, расходники и наблюдение после.
-      Отдельных доплат в конце не будет.
-    </p>
+  <!-- Порядок в разметке = порядок чтения на мобильном: заголовок → лид →
+       ответ про цену → список. На десктопе карточка уезжает во вторую
+       колонку явным grid-placement, а не через order, — чтобы визуальный
+       порядок и DOM не расходились ни на одной ширине. -->
+  <div class="shell prices__grid">
 
-    <p class="prices__warning" data-reveal>
-      Прайс от клиники ещё не получен. Пока во всех строках стоит «—»:
-      правдоподобная цифра, которой никто не подтверждал, здесь была бы обманом.
-    </p>
+    <div class="prices__intro">
+      <p class="section-num" aria-hidden="true">07</p>
+      <h2 class="prices__title" id="prices-h2" data-reveal>Цены</h2>
+      <p class="prices__lead" data-reveal>
+        В пакетные цены уже входят наркоз, расходники и наблюдение после.
+        Отдельных доплат в конце не будет.
+      </p>
+    </div>
+
+    <!-- Ответ на «сколько это стоит» — один раз и заметно, вместо десяти
+         прочерков в колонке. Липнет к верху, чтобы телефон оставался
+         под рукой, пока человек проглядывает десять строк. -->
+    <aside class="answer" data-reveal>
+      <p class="answer__label">Цена</p>
+      <p class="answer__dash" aria-hidden="true">—</p>
+      <p class="answer__state">уточняется</p>
+      <p class="answer__text">
+        Прайс от клиники ещё не получен. Ставить правдоподобную цифру,
+        которой никто не подтверждал, мы не будем. Назовём сумму
+        по телефону — до того, как вы приедете.
+      </p>
+      <a class="btn btn--accent answer__btn" href="tel:+79872152277">+7 987 215-22-77</a>
+    </aside>
 
     <table class="pricelist">
-      <caption class="visually-hidden">Услуги и цены клиники ДоброВет</caption>
-      <thead>
-        <tr><th scope="col">Услуга</th><th scope="col">Что входит</th><th scope="col">Цена</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">Первичный приём терапевта</th>
-          <td>осмотр, консультация, план обследования</td>
-          <td class="price">—<span class="price__note">уточняется</span></td>
-        </tr>
-        <tr>
-          <th scope="row">Комплексная вакцинация</th>
-          <td>осмотр, вакцина, отметка в паспорте</td>
-          <td class="price">—<span class="price__note">уточняется</span></td>
-        </tr>
-        <tr class="pricelist__feature">
-          <th scope="row">Кастрация кота «под ключ»</th>
-          <td>наркоз · операция · попона · наблюдение · снятие швов</td>
-          <td class="price">—<span class="price__note">уточняется</span></td>
-        </tr>
-        <tr>
-          <th scope="row">Стерилизация кошки «под ключ»</th>
-          <td>наркоз · операция · попона · наблюдение · снятие швов</td>
-          <td class="price">—<span class="price__note">уточняется</span></td>
-        </tr>
-        <tr>
-          <th scope="row">УЗИ брюшной полости</th>
-          <td>заключение на руки в день приёма</td>
-          <td class="price">—<span class="price__note">уточняется</span></td>
-        </tr>
-        <tr>
-          <th scope="row">Рентген (один снимок)</th>
-          <td>снимок и описание</td>
-          <td class="price">—<span class="price__note">уточняется</span></td>
-        </tr>
-        <tr>
-          <th scope="row">Общий анализ крови</th>
-          <td>результат в день обращения</td>
-          <td class="price">—<span class="price__note">уточняется</span></td>
-        </tr>
-        <tr>
-          <th scope="row">Чипирование</th>
-          <td>чип, регистрация в базе, отметка в паспорте</td>
-          <td class="price">—<span class="price__note">уточняется</span></td>
-        </tr>
-        <tr>
-          <th scope="row">Гигиеническая стрижка</th>
-          <td>по размеру и типу шерсти</td>
-          <td class="price">—<span class="price__note">уточняется</span></td>
-        </tr>
-        <tr>
-          <th scope="row">Сутки в стационаре</th>
-          <td>наблюдение, назначения, отчёт владельцу</td>
-          <td class="price">—<span class="price__note">уточняется</span></td>
-        </tr>
-      </tbody>
+    <caption class="visually-hidden">
+      Услуги клиники ДоброВет и что входит в каждую. Цены уточняются.
+    </caption>
+    <thead>
+      <tr><th scope="col">Услуга</th><th scope="col">Что входит</th></tr>
+    </thead>
+
+    <tbody class="pricegroup">
+      <tr class="pricegroup__head"><th colspan="2" scope="colgroup">Приём и профилактика</th></tr>
+      <tr>
+        <th scope="row">Первичный приём терапевта</th>
+        <td>осмотр, консультация, план обследования</td>
+      </tr>
+      <tr>
+        <th scope="row">Комплексная вакцинация</th>
+        <td>осмотр, вакцина, отметка в паспорте</td>
+      </tr>
+      <tr>
+        <th scope="row">Чипирование</th>
+        <td>чип, регистрация в базе, отметка в паспорте</td>
+      </tr>
+    </tbody>
+
+    <tbody class="pricegroup">
+      <tr class="pricegroup__head"><th colspan="2" scope="colgroup">Диагностика в тот же визит</th></tr>
+      <tr>
+        <th scope="row">УЗИ брюшной полости</th>
+        <td>заключение на руки в день приёма</td>
+      </tr>
+      <tr>
+        <th scope="row">Рентген (один снимок)</th>
+        <td>снимок и описание</td>
+      </tr>
+      <tr>
+        <th scope="row">Общий анализ крови</th>
+        <td>результат в день обращения</td>
+      </tr>
+    </tbody>
+
+    <!-- Пакеты «под ключ» — то, ради чего секция вообще существует
+         (DOBROVET-BRIEF, позиционирование). Единственный акцент в списке:
+         «под ключ» теперь сказано один раз в заголовке группы,
+         а не в двух названиях строк подряд. -->
+    <tbody class="pricegroup pricegroup--key">
+      <tr class="pricegroup__head"><th colspan="2" scope="colgroup">Операции «под ключ» и стационар</th></tr>
+      <tr>
+        <th scope="row">Кастрация кота</th>
+        <td>наркоз · операция · попона · наблюдение · снятие швов</td>
+      </tr>
+      <tr>
+        <th scope="row">Стерилизация кошки</th>
+        <td>наркоз · операция · попона · наблюдение · снятие швов</td>
+      </tr>
+      <tr>
+        <th scope="row">Сутки в стационаре</th>
+        <td>наблюдение, назначения, отчёт владельцу</td>
+      </tr>
+    </tbody>
+
+    <tbody class="pricegroup">
+      <tr class="pricegroup__head"><th colspan="2" scope="colgroup">Груминг</th></tr>
+      <tr>
+        <th scope="row">Гигиеническая стрижка</th>
+        <td>по размеру и типу шерсти</td>
+      </tr>
+    </tbody>
     </table>
+
   </div>
 </section>
-
 <!-- ============ 7 · ВРАЧИ ============ -->
 <section class="doctors" aria-labelledby="doctors-h2">
   <div class="shell">
@@ -666,15 +731,19 @@
         <a class="contacts__link" href="https://2gis.ru/nizhnekamsk/geo/55.609512%2C51.813379" target="_blank" rel="noopener">Построить маршрут →</a>
       </div>
 
+      <!-- График НЕ выводим цифрами: в трёх справочниках три разные версии
+           (CONTENT.md, «Часы работы»), клиника его ещё не подтвердила,
+           а scripts/config.js стоит с CONFIRMED = false. Правдоподобное
+           «Пн–Сб 10:00–20:00» здесь читалось бы как факт и отправляло бы
+           человека к закрытой двери. Как подтвердят — вернуть таблицу
+           и поставить CONFIRMED = true. -->
       <div class="contacts__block" data-reveal>
         <p class="contacts__label">Часы работы</p>
-        <table class="hours">
-          <tbody>
-            <tr><th scope="row">Пн–Сб</th><td>10:00–20:00</td></tr>
-            <tr><th scope="row">Вс</th><td>10:00–15:00</td></tr>
-          </tbody>
-        </table>
-        <p class="contacts__muted">график уточняется у клиники</p>
+        <p class="contacts__big contacts__big--plain">—</p>
+        <p class="contacts__text">уточняются</p>
+        <p class="contacts__muted">
+          Позвоните — скажем, принимаем ли сейчас и когда удобно приехать.
+        </p>
       </div>
 
       <div class="contacts__block" data-reveal>
@@ -707,7 +776,7 @@
 </footer>
 
 <!-- ============ мобильная липкая полоса ============ -->
-<div class="stickybar" aria-hidden="false">
+<div class="stickybar">
   <a class="btn btn--accent stickybar__btn" href="tel:+79872152277">Позвонить</a>
   <a class="btn btn--ghost stickybar__btn" href="#kontakty">Как доехать</a>
 </div>
