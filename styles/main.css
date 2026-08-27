@@ -604,7 +604,7 @@ a { color: inherit; }
 .pricelist     { grid-column: 1; grid-row: 2; }
 /* Карточка стоит второй в разметке (мобильный порядок чтения),
    а на десктопе занимает вторую колонку на обе строки. */
-.answer        { grid-column: 2; grid-row: 1 / span 2; }
+.pledge        { grid-column: 2; grid-row: 1 / span 2; }
 .prices__title {
   text-wrap: balance;
   font-family: var(--font-display);
@@ -617,34 +617,42 @@ a { color: inherit; }
 /* --- карточка «сколько это стоит» --- */
 /* Один ответ вместо десяти прочерков в колонке. Формат повторяет
    карточку «Часы работы» в контактах: «—», состояние, что делать. */
-.answer {
+.pledge {
   background: var(--paper);
   border-radius: var(--r-lg);
   padding: var(--s8);
   position: sticky;
   top: var(--s24);          /* ниже плавающей пилюли навигации */
 }
-.answer__label {
-  font-size: var(--t-micro);
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.answer__dash {
+.pledge__label {
   font-family: var(--font-display);
   font-size: var(--t-h3);
   font-weight: 700;
-  line-height: 1;
-  margin-block: var(--s3) var(--s2);
+  line-height: 1.15;
+  margin-bottom: var(--s6);
 }
-.answer__state { font-weight: 600; }
-.answer__text {
-  margin-top: var(--s4);
+.pledge__list { display: grid; gap: var(--s3); }
+.pledge__list li {
+  padding-inline-start: var(--s6);
+  position: relative;
+  font-size: var(--t-small);
+}
+/* Та же засечка, что в блоке «До приезда» на тёмной панели, — один приём
+   для списков-перечислений по всей странице. */
+.pledge__list li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.62em;
+  width: 10px; height: 2px;
+  background: var(--primary);
+}
+.pledge__text {
+  margin-top: var(--s6);
   font-size: var(--t-small);
   color: var(--muted);
 }
-.answer__btn { margin-top: var(--s6); width: 100%; }
+.pledge__btn { margin-top: var(--s6); width: 100%; }
 
 /* --- список услуг --- */
 .pricelist {
@@ -663,7 +671,8 @@ a { color: inherit; }
   padding-bottom: var(--s3);
   border-bottom: 2px solid var(--border);
 }
-.pricelist thead th:first-child { width: 36%; }
+.pricelist thead th:first-child { width: 37%; }
+.pricelist thead th:last-child  { width: 14%; text-align: end; }
 .pricelist tbody th,
 .pricelist tbody td {
   padding-block: var(--s4);
@@ -675,6 +684,15 @@ a { color: inherit; }
    единственное, что про услугу сейчас известно наверняка. */
 .pricelist tbody th { font-weight: 600; padding-inline-end: var(--s8); }
 .pricelist tbody td { color: var(--muted); }
+/* Цена — единственное число в строке: моноширинные цифры, чтобы столбец
+   не «дышал», и без переноса, чтобы «1 900 ₽» не разрывалось. */
+.pricelist td.price {
+  color: var(--ink);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-align: end;
+}
 
 /* Заголовок группы. Десять строк подряд читались как один поток —
    четыре группы дают глазу, за что зацепиться. */
@@ -697,10 +715,10 @@ a { color: inherit; }
 
 @media (max-width: 900px) {
   .prices__grid { grid-template-columns: 1fr; }
-  .prices__intro, .answer, .pricelist { grid-column: 1; grid-row: auto; }
+  .prices__intro, .pledge, .pricelist { grid-column: 1; grid-row: auto; }
   /* На узком экране липкая карточка съедала бы треть экрана — отключаем. */
-  .answer { position: static; }
-  .answer__btn { width: auto; }
+  .pledge { position: static; }
+  .pledge__btn { width: auto; }
 }
 @media (max-width: 720px) {
   .prices { padding-block: var(--s16); }
@@ -714,6 +732,7 @@ a { color: inherit; }
   }
   .pricelist tbody th,
   .pricelist tbody td { border: 0; padding-block: 0; padding-inline-end: 0; }
+  .pricelist td.price { text-align: start; margin-top: var(--s2); }
   /* Заголовок группы остаётся отдельной строкой с рамкой снизу. */
   .pricelist .pricegroup__head th { padding-block: var(--s8) var(--s2); border: 0; }
   .pricelist .pricegroup:first-of-type .pricegroup__head th { padding-top: var(--s4); }
@@ -760,27 +779,21 @@ a { color: inherit; }
   font-family: var(--font-display);
   font-size: var(--t-h3);
   font-weight: 700;
-  line-height: 1;
+  /* Полное имя с отчеством переносится на две строки, а style-lock держит
+     нижнюю границу интерлиньяжа дисплея для кириллицы на 1.05:
+     при 1.0 выносные «у», «р», «ф» задевают строку ниже. */
+  line-height: 1.1;
+  text-wrap: balance;
 }
 .teammate__role { font-size: var(--t-small); color: var(--muted); }
 
-.doctors__warning {
-  margin-top: var(--s8);
-  padding: var(--s4) var(--s6);
-  background: var(--accent);
-  color: var(--on-accent);
-  border-radius: var(--r-md);
-  max-width: 62ch;
-  font-size: var(--t-small);
-  font-weight: 500;
-}
 
 @media (max-width: 860px) { .team { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 520px) {
   .team { grid-template-columns: 1fr; gap: var(--s3); margin-top: var(--s8); }
   .rooms__photo { margin-top: var(--s8); }
 }
-.doctors__note { margin-top: var(--s4); font-size: var(--t-small); color: var(--muted); max-width: 62ch; }
+.doctors__note { margin-top: var(--s8); font-size: var(--t-small); color: var(--muted); max-width: 62ch; }
 @media (max-width: 640px) { .doctors { padding-block: var(--s16); } }
 
 /* ============ 8 · ОТЗЫВ ============ */
@@ -824,7 +837,21 @@ a { color: inherit; }
   min-height: 44px;
 }
 @media (hover: hover) { .quote__link:hover { text-decoration: underline; } }
-.quote__note { font-size: var(--t-micro); }
+/* Рейтинг набран крупнее источника — это то, за чем сюда смотрят. */
+.quote__rating {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.quote__score {
+  font-family: var(--font-display);
+  font-size: var(--t-h3);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--primary);
+}
 
 @media (max-width: 860px) {
   .quote { grid-template-columns: 1fr; gap: var(--s8); }
@@ -897,9 +924,10 @@ a { color: inherit; }
   margin-inline-end: var(--s4);
 }
 @media (hover: hover) { .contacts__link:hover { text-decoration: underline; } }
-/* Прочерк вместо часов: тот же кегль, что у телефонов, но это не ссылка —
-   цель нажатия ему не нужна. */
-.contacts__big--plain { min-height: 0; margin-bottom: var(--s1); }
+.hours { border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.hours th, .hours td { padding-block: var(--s1); text-align: start; font-weight: 400; }
+.hours th { padding-inline-end: var(--s6); color: var(--panel-muted); }
+.hours td { color: var(--on-panel); }
 
 @media (max-width: 980px) { .contacts__grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) {

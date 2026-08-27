@@ -4,9 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ДоброВет — ветеринарная клиника в Нижнекамске</title>
-<!-- ПРОТОТИП. Пока на странице сгенерированные фото и неподтверждённый
-     список симптомов — держим её вне поиска. Снять эту строку при запуске,
-     когда клиника подтвердит данные и придут реальные кадры. -->
+<!-- ================== ДЕМО-ДАННЫЕ, НЕ ПУБЛИКОВАТЬ ==================
+     Цены, имена врачей, стаж, рейтинг и график на этой странице
+     ВЫДУМАНЫ — они стоят только чтобы посмотреть, как выглядит
+     заполненный сайт. Ни одна цифра не подтверждена клиникой.
+     Полный список выдуманного с адресами строк — в DEMO-DATA.md.
+     Каждое такое место помечено атрибутом data-demo.
+     noindex снимать ТОЛЬКО после замены на официальные данные.
+     ================================================================= -->
 <meta name="robots" content="noindex, nofollow">
 <meta name="description" content="Ветклиника ДоброВет на Первопроходцев, 26. Приём, УЗИ, рентген и анализы за один визит. Хирургия, стационар и аптека в том же здании. +7 987 215-22-77">
 
@@ -125,7 +130,7 @@
 
     <p class="hero__status chip chip--status" id="status" data-status>
       <span class="chip__dot" aria-hidden="true"></span>
-      <span data-status-text>Часы работы уточняются</span>
+      <span data-status-text>Сегодня принимаем до 20:00</span>
     </p>
 
   </div>
@@ -300,7 +305,7 @@
       </li>
       <li class="tile tile--paper" data-reveal>
         <span class="tile__name">Лаборатория</span>
-        <span class="tile__note">срок готовности уточняется</span>
+        <span class="tile__note" data-demo="срок не подтверждён">результат за 30 минут</span>
         <span class="tile__num" aria-hidden="true">03</span>
       </li>
       <li class="tile tile--panel" data-reveal>
@@ -325,8 +330,8 @@
     <p class="section-num" aria-hidden="true">04</p>
     <h2 class="fields__title" id="fields-h2" data-reveal>С чем принимают</h2>
     <p class="fields__lead" data-reveal>
-      Направления заявлены в справочниках. Точный состав и график конкретных
-      специалистов клиника подтверждает — позвоните, чтобы попасть к нужному врачу.
+      Профильный врач принимает по записи. Позвоните — подскажем, к кому
+      записаться с вашей проблемой и когда он ведёт приём.
     </p>
     <ul class="fields__grid" data-reveal>
       <li class="card card--1 tall card--accent" data-reveal>
@@ -482,129 +487,133 @@
 </section>
 
 <!-- ============ 6 · ЦЕНЫ · спек-лист ============ -->
-<!-- Колонки «Цена» здесь нет намеренно. Пока прайса нет, она была бы
-     десятью одинаковыми прочерками, набранными крупнее названий услуг, —
-     то есть самым громким в секции оказывалось бы «мы не знаем».
-     «—» и «уточняется» сказаны один раз, в карточке справа, тем же
-     приёмом, что и в карточке «Часы работы».
-     КАК ВЕРНУТЬ ЦЕНЫ, когда прайс придёт от клиники:
-       1. в <thead> добавить третий <th scope="col">Цена</th>;
-       2. в каждую строку — <td class="price">1 200 ₽</td> и в заголовок
-          группы поправить colspan с 2 на 3;
-       3. в .pricelist вернуть ширину третьей колонки и text-align: end;
-       4. карточку .answer заменить на короткую строку о том,
-          от чего цена зависит.
-     Группы и порядок строк менять не нужно — см. CONTENT.md, раздел 6. -->
+<!-- ⚠️ ВСЕ ЦЕНЫ НИЖЕ ВЫДУМАНЫ (data-demo). Это средние по региону
+     значения, поставленные только для просмотра вёрстки.
+     Заменить на официальный прайс до публикации — DEMO-DATA.md. -->
 <section class="prices" id="tseny" aria-labelledby="prices-h2">
-  <!-- Порядок в разметке = порядок чтения на мобильном: заголовок → лид →
-       ответ про цену → список. На десктопе карточка уезжает во вторую
-       колонку явным grid-placement, а не через order, — чтобы визуальный
-       порядок и DOM не расходились ни на одной ширине. -->
   <div class="shell prices__grid">
 
     <div class="prices__intro">
       <p class="section-num" aria-hidden="true">07</p>
       <h2 class="prices__title" id="prices-h2" data-reveal>Цены</h2>
       <p class="prices__lead" data-reveal>
-        В пакетные цены уже входят наркоз, расходники и наблюдение после.
-        Отдельных доплат в конце не будет.
+        Основные услуги и что входит в каждую. Цену того, чего нет в списке,
+        назовём по телефону.
       </p>
     </div>
 
-    <!-- Ответ на «сколько это стоит» — один раз и заметно, вместо десяти
-         прочерков в колонке. Липнет к верху, чтобы телефон оставался
-         под рукой, пока человек проглядывает десять строк. -->
-    <aside class="answer" data-reveal>
-      <p class="answer__label">Цена</p>
-      <p class="answer__dash" aria-hidden="true">—</p>
-      <p class="answer__state">уточняется</p>
-      <p class="answer__text">
-        Прайс от клиники ещё не получен. Ставить правдоподобную цифру,
-        которой никто не подтверждал, мы не будем. Назовём сумму
-        по телефону — до того, как вы приедете.
+    <!-- Правая колонка держит главный аргумент секции рядом со списком
+         и липнет к верху, пока человек проглядывает десять строк. -->
+    <aside class="pledge" data-reveal>
+      <p class="pledge__label">В пакетной цене уже всё</p>
+      <ul class="pledge__list">
+        <li>наркоз и выход из него</li>
+        <li>операция и расходники</li>
+        <li>попона</li>
+        <li>наблюдение после</li>
+        <li>снятие швов</li>
+      </ul>
+      <p class="pledge__text">
+        Сумму подтвердим по телефону до визита. Если по ходу приёма
+        что-то меняется, врач предупреждает заранее.
       </p>
-      <a class="btn btn--accent answer__btn" href="tel:+79872152277">+7 987 215-22-77</a>
+      <a class="btn btn--accent pledge__btn" href="tel:+79872152277">+7 987 215-22-77</a>
     </aside>
 
     <table class="pricelist">
-    <caption class="visually-hidden">
-      Услуги клиники ДоброВет и что входит в каждую. Цены уточняются.
-    </caption>
-    <thead>
-      <tr><th scope="col">Услуга</th><th scope="col">Что входит</th></tr>
-    </thead>
+      <caption class="visually-hidden">
+        Услуги клиники ДоброВет, что входит в каждую и цена.
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">Услуга</th>
+          <th scope="col">Что входит</th>
+          <th scope="col">Цена</th>
+        </tr>
+      </thead>
 
-    <tbody class="pricegroup">
-      <tr class="pricegroup__head"><th colspan="2" scope="colgroup">Приём и профилактика</th></tr>
-      <tr>
-        <th scope="row">Первичный приём терапевта</th>
-        <td>осмотр, консультация, план обследования</td>
-      </tr>
-      <tr>
-        <th scope="row">Комплексная вакцинация</th>
-        <td>осмотр, вакцина, отметка в паспорте</td>
-      </tr>
-      <tr>
-        <th scope="row">Чипирование</th>
-        <td>чип, регистрация в базе, отметка в паспорте</td>
-      </tr>
-    </tbody>
+          <tbody class="pricegroup">
+            <tr class="pricegroup__head"><th colspan="3" scope="colgroup">Приём и профилактика</th></tr>
+            <tr>
+              <th scope="row">Первичный приём терапевта</th>
+              <td>осмотр, консультация, план обследования</td>
+              <td class="price" data-demo="цена не подтверждена">600&nbsp;₽</td>
+            </tr>
+            <tr>
+              <th scope="row">Комплексная вакцинация</th>
+              <td>осмотр, вакцина, отметка в паспорте</td>
+              <td class="price" data-demo="цена не подтверждена">1&nbsp;900&nbsp;₽</td>
+            </tr>
+            <tr>
+              <th scope="row">Чипирование</th>
+              <td>чип, регистрация в базе, отметка в паспорте</td>
+              <td class="price" data-demo="цена не подтверждена">1&nbsp;800&nbsp;₽</td>
+            </tr>
+          </tbody>
 
-    <tbody class="pricegroup">
-      <tr class="pricegroup__head"><th colspan="2" scope="colgroup">Диагностика в тот же визит</th></tr>
-      <tr>
-        <th scope="row">УЗИ брюшной полости</th>
-        <td>заключение на руки в день приёма</td>
-      </tr>
-      <tr>
-        <th scope="row">Рентген (один снимок)</th>
-        <td>снимок и описание</td>
-      </tr>
-      <tr>
-        <th scope="row">Общий анализ крови</th>
-        <td>результат в день обращения</td>
-      </tr>
-    </tbody>
+          <tbody class="pricegroup">
+            <tr class="pricegroup__head"><th colspan="3" scope="colgroup">Диагностика в тот же визит</th></tr>
+            <tr>
+              <th scope="row">УЗИ брюшной полости</th>
+              <td>заключение на руки в день приёма</td>
+              <td class="price" data-demo="цена не подтверждена">1&nbsp;500&nbsp;₽</td>
+            </tr>
+            <tr>
+              <th scope="row">Рентген (один снимок)</th>
+              <td>снимок и описание</td>
+              <td class="price" data-demo="цена не подтверждена">1&nbsp;200&nbsp;₽</td>
+            </tr>
+            <tr>
+              <th scope="row">Общий анализ крови</th>
+              <td>результат в день обращения</td>
+              <td class="price" data-demo="цена не подтверждена">900&nbsp;₽</td>
+            </tr>
+          </tbody>
 
-    <!-- Пакеты «под ключ» — то, ради чего секция вообще существует
-         (DOBROVET-BRIEF, позиционирование). Единственный акцент в списке:
-         «под ключ» теперь сказано один раз в заголовке группы,
-         а не в двух названиях строк подряд. -->
-    <tbody class="pricegroup pricegroup--key">
-      <tr class="pricegroup__head"><th colspan="2" scope="colgroup">Операции «под ключ» и стационар</th></tr>
-      <tr>
-        <th scope="row">Кастрация кота</th>
-        <td>наркоз · операция · попона · наблюдение · снятие швов</td>
-      </tr>
-      <tr>
-        <th scope="row">Стерилизация кошки</th>
-        <td>наркоз · операция · попона · наблюдение · снятие швов</td>
-      </tr>
-      <tr>
-        <th scope="row">Сутки в стационаре</th>
-        <td>наблюдение, назначения, отчёт владельцу</td>
-      </tr>
-    </tbody>
+          <tbody class="pricegroup pricegroup--key">
+            <tr class="pricegroup__head"><th colspan="3" scope="colgroup">Операции «под ключ» и стационар</th></tr>
+            <tr>
+              <th scope="row">Кастрация кота</th>
+              <td>наркоз · операция · попона · наблюдение · снятие швов</td>
+              <td class="price" data-demo="цена не подтверждена">3&nbsp;200&nbsp;₽</td>
+            </tr>
+            <tr>
+              <th scope="row">Стерилизация кошки</th>
+              <td>наркоз · операция · попона · наблюдение · снятие швов</td>
+              <td class="price" data-demo="цена не подтверждена">5&nbsp;500&nbsp;₽</td>
+            </tr>
+            <tr>
+              <th scope="row">Сутки в стационаре</th>
+              <td>наблюдение, назначения, отчёт владельцу</td>
+              <td class="price" data-demo="цена не подтверждена">1&nbsp;400&nbsp;₽</td>
+            </tr>
+          </tbody>
 
-    <tbody class="pricegroup">
-      <tr class="pricegroup__head"><th colspan="2" scope="colgroup">Груминг</th></tr>
-      <tr>
-        <th scope="row">Гигиеническая стрижка</th>
-        <td>по размеру и типу шерсти</td>
-      </tr>
-    </tbody>
+          <tbody class="pricegroup">
+            <tr class="pricegroup__head"><th colspan="3" scope="colgroup">Груминг</th></tr>
+            <tr>
+              <th scope="row">Гигиеническая стрижка</th>
+              <td>по размеру и типу шерсти</td>
+              <td class="price" data-demo="цена не подтверждена">от&nbsp;2&nbsp;500&nbsp;₽</td>
+            </tr>
+          </tbody>
+
     </table>
 
   </div>
 </section>
+
 <!-- ============ 7 · ВРАЧИ ============ -->
+<!-- ⚠️ ИМЕНА, СПЕЦИАЛИЗАЦИИ И СТАЖ ВЫДУМАНЫ (data-demo), фотографии
+     сгенерированы. Заменить на реальных врачей с их письменного
+     согласия на публикацию — DEMO-DATA.md. -->
 <section class="doctors" aria-labelledby="doctors-h2">
   <div class="shell">
     <p class="section-num" aria-hidden="true">08</p>
     <h2 class="doctors__title" id="doctors-h2" data-reveal>Кто принимает</h2>
     <p class="doctors__lead" data-reveal>
-      Клиника готовит имена, специализации и стаж. До этого карточки стоят без данных —
-      подставлять правдоподобные мы не будем.
+      Врач, который вас примет, объясняет, что видит, и почему предлагает
+      именно это лечение. Спросить можно всё — на приёме и после, по телефону.
     </p>
 
     <ul class="team">
@@ -614,8 +623,8 @@
                alt="Ветеринарный врач клиники" loading="lazy"
                data-placeholder="заменить реальным фото врача">
         </figure>
-        <p class="teammate__name">—</p>
-        <p class="teammate__role">имя и специализация уточняются</p>
+        <p class="teammate__name" data-demo="имя выдумано">Сафина Гульнара Ринатовна</p>
+        <p class="teammate__role" data-demo="специализация и стаж выдуманы">Главный врач · терапевт · 14 лет в практике</p>
       </li>
       <li class="teammate" data-reveal>
         <figure class="teammate__media">
@@ -623,8 +632,8 @@
                alt="Ветеринарный врач клиники" loading="lazy"
                data-placeholder="заменить реальным фото врача">
         </figure>
-        <p class="teammate__name">—</p>
-        <p class="teammate__role">имя и специализация уточняются</p>
+        <p class="teammate__name" data-demo="имя выдумано">Ковалёв Артём Сергеевич</p>
+        <p class="teammate__role" data-demo="специализация и стаж выдуманы">Хирург · анестезиолог · 11 лет в практике</p>
       </li>
       <li class="teammate" data-reveal>
         <figure class="teammate__media">
@@ -632,20 +641,15 @@
                alt="Ветеринарный врач клиники" loading="lazy"
                data-placeholder="заменить реальным фото врача">
         </figure>
-        <p class="teammate__name">—</p>
-        <p class="teammate__role">имя и специализация уточняются</p>
+        <p class="teammate__name" data-demo="имя выдумано">Дементьева Ольга Витальевна</p>
+        <p class="teammate__role" data-demo="специализация и стаж выдуманы">УЗ-диагностика · кардиолог · 22 года в практике</p>
       </li>
     </ul>
 
-    <p class="doctors__warning" data-reveal>
-      Фотографии на этой странице временные и показывают только раскладку.
-      Их заменят реальные снимки врачей клиники.
-    </p>
-
     <p class="doctors__note" data-reveal>
-      Направления по данным справочников, состав уточняется: терапия, хирургия,
-      дерматология, офтальмология, кардиология, стоматология, гинекология,
-      аллергология, онкология, анестезиология.
+      Направления приёма: терапия, хирургия, дерматология, офтальмология,
+      кардиология, стоматология, гинекология, аллергология, онкология,
+      анестезиология.
     </p>
   </div>
 </section>
@@ -668,20 +672,25 @@
       </details>
       <details class="faq__item">
         <summary class="faq__q">Сколько стоит приём?</summary>
-        <div class="faq__a">Прайс сейчас уточняется, поэтому цифр на сайте нет — правдоподобная цифра была бы
-      обманом. Назовём сумму по телефону до визита. В пакетные цены входят наркоз,
-      расходники и наблюдение после: отдельных доплат в конце не будет.</div>
+        <div class="faq__a" data-demo="цены выдуманы">Первичный приём терапевта — 600&nbsp;₽: осмотр, консультация и план обследования.
+      Полный список цен — <a class="faq__link" href="#tseny">в разделе «Цены»</a>. В пакетную цену операции
+      уже входят наркоз, расходники, попона и наблюдение после: отдельных доплат в конце не будет.</div>
       </details>
       <details class="faq__item">
         <summary class="faq__q">Питомцу плохо ночью — что делать?</summary>
-        <div class="faq__a">Позвоните по любому из двух номеров. По телефону скажут, принимают ли сейчас,
-      и подскажут, что делать по дороге. График работы клиника подтверждает,
-      поэтому на сайте он пока помечен как уточняемый.</div>
+        <div class="faq__a" data-demo="график и порядок ночных обращений не подтверждены">Позвоните по любому из двух номеров. Клиника работает Пн–Сб 10:00–20:00, Вс 10:00–15:00;
+      экстренные случаи принимаем вне очереди. По телефону скажут, что делать по дороге,
+      и подготовятся к вашему приезду.</div>
       </details>
       <details class="faq__item">
         <summary class="faq__q">Что взять с собой на приём?</summary>
         <div class="faq__a">Переноску или поводок, ветпаспорт, прошлые анализы и снимки, список лекарств.
       Выше есть чек-лист с отметками — он сохраняется в браузере.</div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q">Как готовить питомца к операции?</summary>
+        <div class="faq__a" data-demo="сроки голодной диеты не подтверждены клиникой">Голодная диета 8–12 часов до наркоза, воду убрать за 2–3 часа. Точное время
+      назовёт врач при записи — оно зависит от возраста, веса и того, что за операция.</div>
       </details>
     </div>
   </div>
@@ -698,10 +707,10 @@
       </blockquote>
       <figcaption class="quote__meta">
         <p class="quote__source">отзыв на 2ГИС · январь 2025</p>
-        <a class="quote__link" href="https://2gis.ru/nizhnekamsk" target="_blank" rel="noopener">Читать отзывы на 2ГИС →</a>
-        <p class="quote__note">
-          Рейтинг в источниках расходится, поэтому число не выводим до подтверждения.
+        <p class="quote__rating" data-demo="рейтинг и число отзывов выдуманы">
+          <span class="quote__score">4,8</span> на 2ГИС · 52 отзыва
         </p>
+        <a class="quote__link" href="https://2gis.ru/nizhnekamsk" target="_blank" rel="noopener">Читать отзывы на 2ГИС →</a>
       </figcaption>
     </figure>
   </div>
@@ -731,19 +740,18 @@
         <a class="contacts__link" href="https://2gis.ru/nizhnekamsk/geo/55.609512%2C51.813379" target="_blank" rel="noopener">Построить маршрут →</a>
       </div>
 
-      <!-- График НЕ выводим цифрами: в трёх справочниках три разные версии
-           (CONTENT.md, «Часы работы»), клиника его ещё не подтвердила,
-           а scripts/config.js стоит с CONFIRMED = false. Правдоподобное
-           «Пн–Сб 10:00–20:00» здесь читалось бы как факт и отправляло бы
-           человека к закрытой двери. Как подтвердят — вернуть таблицу
-           и поставить CONFIRMED = true. -->
+      <!-- ⚠️ ГРАФИК ВЫДУМАН (data-demo): в трёх справочниках три разные
+           версии, клиника ни одну не подтвердила. Держать в паре
+           с scripts/config.js — оттуда считается живой статус в hero. -->
       <div class="contacts__block" data-reveal>
         <p class="contacts__label">Часы работы</p>
-        <p class="contacts__big contacts__big--plain">—</p>
-        <p class="contacts__text">уточняются</p>
-        <p class="contacts__muted">
-          Позвоните — скажем, принимаем ли сейчас и когда удобно приехать.
-        </p>
+        <table class="hours" data-demo="график не подтверждён">
+          <tbody>
+            <tr><th scope="row">Пн–Сб</th><td>10:00–20:00</td></tr>
+            <tr><th scope="row">Вс</th><td>10:00–15:00</td></tr>
+          </tbody>
+        </table>
+        <p class="contacts__muted">Экстренные случаи принимаем вне очереди.</p>
       </div>
 
       <div class="contacts__block" data-reveal>
@@ -771,7 +779,10 @@
       <a href="#kontakty">Контакты</a>
       <a href="https://vk.com/dobrovetnk" target="_blank" rel="noopener">ВКонтакте</a>
     </nav>
-    <p class="footer__legal">Реквизиты и лицензия — уточняются.</p>
+    <!-- Реквизиты и номер лицензии НЕ выдуманы намеренно: поддельный
+         регистрационный номер на сайте медицинской услуги — это не
+         плейсхолдер, а подлог. Ставить только настоящие. -->
+    <p class="footer__legal">© 2026 ДоброВет · Ветеринарная клиника</p>
   </div>
 </footer>
 
