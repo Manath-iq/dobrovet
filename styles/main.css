@@ -849,26 +849,61 @@ a { color: inherit; }
   .prices { padding-block: var(--s16); }
   .pricelist { table-layout: auto; }
   .pricelist thead { display: none; }
+
+  /* Группа — стопка карточек с зазором, как чек-лист «что взять с собой». */
+  .pricelist tbody { display: grid; gap: var(--s2); }
+
+  /* Строка прайса становится белой плиткой. Раньше строки лежали прямо
+     на --surface, а разделяла их линия --border: контраст 1.17, её
+     физически не видно, и десять позиций читались одним серым потоком.
+     На десктопе структуру держит колонка цифр справа; на телефоне
+     колонки схлопываются, и держать становится нечему. Разделяем
+     цветом плит, а не линейками — как и вся остальная страница. */
   .pricelist tbody tr {
     display: grid;
-    gap: var(--s1);
-    padding-block: var(--s4);
-    border-bottom: 1px solid var(--border);
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    column-gap: var(--s4);
+    background: var(--paper);
+    border-radius: var(--r-md);
+    padding: var(--s4) var(--s6);
+    border-bottom: 0;
   }
   .pricelist tbody th,
-  .pricelist tbody td { border: 0; padding-block: 0; padding-inline-end: 0; }
-  /* В столбик цена шла тем же кеглем, что название услуги, и терялась
-     третьей строкой. Единственное число в строке должно быть заметно. */
+  .pricelist tbody td { border: 0; padding: 0; }
+
+  .pricelist tbody th { grid-column: 1; grid-row: 1; }
+  /* Цена возвращает себе правый край. В столбик она уезжала третьей
+     строкой под состав, к левому краю, тем же кеглем, что название, —
+     единственное число в строке пропадало совсем. */
   .pricelist td.price {
-    text-align: start;
-    margin-top: var(--s2);
-    font-size: var(--t-lead);
+    grid-column: 2;
+    grid-row: 1;
+    text-align: end;
     font-family: var(--font-display);
-    letter-spacing: -0.01em;
+    font-size: var(--t-h3);
+    letter-spacing: -0.02em;
   }
-  /* Заголовок группы остаётся отдельной строкой с рамкой снизу. */
-  .pricelist .pricegroup__head th { padding-block: var(--s8) var(--s2); border: 0; }
-  .pricelist .pricegroup:first-of-type .pricegroup__head th { padding-top: var(--s4); }
+  /* Состав — во всю ширину под названием и ценой. */
+  .pricelist tbody td:not(.price) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-top: var(--s1);
+    font-size: var(--t-small);
+  }
+
+  /* Заголовок группы плиткой не становится: это подпись НАД стопкой,
+     а не позиция в ней. Раньше он висел капсом на пустом фоне без
+     подложки и без линии — «ГРУМИНГ» читался как хвост предыдущей
+     группы, а не как начало новой. */
+  .pricelist .pricegroup__head {
+    display: block;
+    background: transparent;
+    border-radius: 0;
+    padding: var(--s6) 0 var(--s1);
+  }
+  .pricelist .pricegroup:first-of-type .pricegroup__head { padding-top: 0; }
+  .pricelist .pricegroup__head th { padding: 0; }
 }
 
 /* ============ 7 · ВРАЧИ ============ */
